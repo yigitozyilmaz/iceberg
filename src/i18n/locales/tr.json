@@ -1,0 +1,51 @@
+{
+  "common": {
+    "appTitle": "Emlak Randevu Sistemi",
+    "loading": "Yükleniyor...",
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "error": "Hata",
+    "success": "Başarılı",
+    "actions": "İşlemler",
+    "search": "Ara..."
+  },
+  "appointments": {
+    "title": "Randevu Listesi",
+    "new": "Yeni Randevu",
+    "edit": "Randevu Düzenle",
+    "create": "Randevu Oluştur",
+    "fields": {
+      "date": "Tarih ve Saat",
+      "address": "Adres",
+      "contactName": "İsim",
+      "contactEmail": "Email",
+      "contactPhone": "Telefon",
+      "status": "Durum"
+    },
+    "status": {
+      "active": "Aktif",
+      "cancelled": "İptal Edildi",
+      "upcoming": "Yaklaşan",
+      "completed": "Tamamlandı",
+      "all": "Tüm Durumlar"
+    },
+    "placeholders": {
+      "address": "Randevu adresi",
+      "contactName": "Müşteri adı",
+      "contactEmail": "ornek@email.com",
+      "contactPhone": "Telefon numarası",
+      "dateFrom": "Başlangıç",
+      "dateTo": "Bitiş",
+      "search": "Ara..."
+    },
+    "messages": {
+      "createSuccess": "Randevu başarıyla oluşturuldu",
+      "updateSuccess": "Randevu başarıyla güncellendi",
+      "loadError": "Randevular yüklenirken bir hata oluştu",
+      "saveError": "Randevu kaydedilirken bir hata oluştu"
+    },
+    "count": {
+      "found": "{{count}} Randevu bulundu"
+    }
+  }
+}

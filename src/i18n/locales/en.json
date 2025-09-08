@@ -1,0 +1,51 @@
+{
+  "common": {
+    "appTitle": "Real Estate Appointment System",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "error": "Error",
+    "success": "Success",
+    "actions": "Actions",
+    "search": "Search..."
+  },
+  "appointments": {
+    "title": "Appointment List",
+    "new": "New Appointment",
+    "edit": "Edit Appointment",
+    "create": "Create Appointment",
+    "fields": {
+      "date": "Date and Time",
+      "address": "Address",
+      "contactName": "Name",
+      "contactEmail": "Email",
+      "contactPhone": "Phone",
+      "status": "Status"
+    },
+    "status": {
+      "active": "Active",
+      "cancelled": "Cancelled",
+      "upcoming": "Upcoming",
+      "completed": "Completed",
+      "all": "All Statuses"
+    },
+    "placeholders": {
+      "address": "Appointment address",
+      "contactName": "Customer name",
+      "contactEmail": "example@email.com",
+      "contactPhone": "Phone number",
+      "dateFrom": "From",
+      "dateTo": "To",
+      "search": "Search..."
+    },
+    "messages": {
+      "createSuccess": "Appointment created successfully",
+      "updateSuccess": "Appointment updated successfully",
+      "loadError": "Error loading appointments",
+      "saveError": "Error saving appointment"
+    },
+    "count": {
+      "found": "{{count}} Appointments found"
+    }
+  }
+}
