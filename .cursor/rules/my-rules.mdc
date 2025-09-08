@@ -1,0 +1,95 @@
+---
+description: |
+  Bu Vue 3 projesi için temel kurallar ve yapılandırma:
+
+  1. Vue 3 Options API kullanılacak (Vue ^3.3.4)
+  2. Tailwind CSS entegrasyonu yapılacak (Tailwind ^3.3.3)
+  3. PrimeVue v4 component kütüphanesi kullanılacak (PrimeVue ^3.35.0)
+  4. Tüm componentler Options API formatında yazılacak
+  5. Style tanımlamaları Tailwind class'ları ile yapılacak
+  6. PrimeVue componentleri için özel temalar Tailwind ile customize edilecek
+  7. JavaScript kullanılacak, TypeScript kullanılmayacak
+  8. ESLint ve Prettier kullanılarak kod formatı korunacak
+
+globs:
+  - "src/**/*.vue"
+  - "src/**/*.js"
+  - "src/**/*.css"
+alwaysApply: true
+---
+
+# Vue 3 Proje Kuralları
+
+## Paket Versiyonları
+
+```json
+{
+  "dependencies": {
+    "vue": "^3.3.4",
+    "primevue": "^3.35.0",
+    "primeicons": "^6.0.1",
+    "@vueuse/core": "^10.5.0",
+    "axios": "^1.5.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.3.4",
+    "vite": "^4.4.9",
+    "tailwindcss": "^3.3.3",
+    "postcss": "^8.4.29",
+    "autoprefixer": "^10.4.15"
+  }
+}
+```
+
+## Component Yapısı
+
+```vue
+<template>
+  <div class="container mx-auto">
+    <!-- Template içeriği -->
+  </div>
+</template>
+
+<script>
+export default {
+  name: "ComponentName",
+  components: {},
+  props: {},
+  data() {
+    return {};
+  },
+  methods: {},
+  computed: {},
+  mounted() {},
+};
+</script>
+```
+
+## Tailwind Kullanımı
+
+- Özel CSS yerine Tailwind class'ları kullanılacak
+- Responsive tasarım için Tailwind breakpoint'leri kullanılacak (sm, md, lg, xl)
+- Tema renkleri Tailwind config içinde tanımlanacak
+
+## PrimeVue Kullanımı
+
+- PrimeVue v4 componentleri için Tailwind teması kullanılacak
+- Component importları lazy loading ile yapılacak
+- PrimeVue componentleri için özel temalar tailwind.config.js içinde tanımlanacak
+
+## JavaScript Standartları
+
+- ES6+ özellikleri kullanılacak
+- Arrow functions tercih edilecek
+- Destructuring kullanılacak
+- Async/await kullanılacak
+- PropTypes ile prop validasyonları yapılacak
+
+## Dosya Organizasyonu
+
+- Components/ - Yeniden kullanılabilir Vue componentleri
+- Views/ - Sayfa componentleri
+- Assets/ - Statik dosyalar
+- Store/ - Vuex store dosyaları
+- Services/ - API servisleri
+- Utils/ - Yardımcı fonksiyonlar
