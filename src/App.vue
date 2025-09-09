@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen">
     <nav class="bg-white shadow-sm">
       <div class="container mx-auto px-4 py-3">
         <div class="flex justify-between items-center">
@@ -15,10 +15,8 @@
       <AppointmentList
         :appointments="appointments"
         :loading="loading"
-        :totalRecords="totalRecords"
         @new-appointment="showModal = true"
         @edit-appointment="editAppointment"
-        @load-data="loadAppointments"
       />
     </main>
 
@@ -38,7 +36,7 @@
 <script>
 import AppointmentList from "./components/appointments/AppointmentList.vue";
 import AppointmentModal from "./components/appointments/AppointmentModal.vue";
-import { appointmentApi } from "./services/api";
+import { AppointmentService } from "./api/services/appointment.service";
 
 export default {
   name: "App",
@@ -53,20 +51,14 @@ export default {
       saving: false,
       showModal: false,
       selectedAppointment: null,
-      totalRecords: 0,
     };
   },
   methods: {
-    async loadAppointments({ page = 1, perPage = 10, filters = {} } = {}) {
+    async loadAppointments() {
       try {
         this.loading = true;
-        const response = await appointmentApi.getAll({
-          page,
-          perPage,
-          filters,
-        });
+        const response = await AppointmentService.getAppointments();
         this.appointments = response.data;
-        this.totalRecords = response.pagination.total;
       } catch (error) {
         console.error("Error:", error);
         this.$toast.add({
@@ -87,7 +79,10 @@ export default {
       try {
         this.saving = true;
         if (this.selectedAppointment) {
-          await appointmentApi.update(this.selectedAppointment.id, formData);
+          await AppointmentService.updateAppointment(
+            this.selectedAppointment.id,
+            formData
+          );
           this.$toast.add({
             severity: "success",
             summary: this.$t("common.success"),
@@ -95,7 +90,7 @@ export default {
             life: 3000,
           });
         } else {
-          await appointmentApi.create(formData);
+          await AppointmentService.createAppointment(formData);
           this.$toast.add({
             severity: "success",
             summary: this.$t("common.success"),

@@ -45,7 +45,7 @@
       "saveError": "Randevu kaydedilirken bir hata oluştu"
     },
     "count": {
-      "found": "{{count}} Randevu bulundu"
+      "found": "{count} Randevu bulundu"
     }
   }
 }

@@ -45,7 +45,7 @@
       "saveError": "Error saving appointment"
     },
     "count": {
-      "found": "{{count}} Appointments found"
+      "found": "{count} Appointments found"
     }
   }
 }

@@ -24,7 +24,7 @@ import './style.css'
 
 const i18n = createI18n({
     legacy: false,
-    locale: 'tr',
+    locale: 'en',
     fallbackLocale: 'en',
     messages: { tr, en }
 })
