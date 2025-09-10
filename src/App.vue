@@ -1,17 +1,7 @@
 <template>
   <div class="min-h-screen">
-    <nav class="bg-white shadow-sm">
-      <div class="container mx-auto px-4 py-3">
-        <div class="flex justify-between items-center">
-          <h1 class="text-xl font-semibold text-gray-800">
-            {{ $t("common.appTitle") }}
-          </h1>
-        </div>
-      </div>
-    </nav>
-
     <!-- Main Content -->
-    <main class="container mx-auto">
+    <main class="w-full">
       <AppointmentList
         :appointments="appointments"
         :loading="loading"

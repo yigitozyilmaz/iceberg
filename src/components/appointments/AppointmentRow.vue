@@ -1,6 +1,6 @@
 <template>
   <div
-    class="pl-16 pr-4 py-3 flex items-center justify-evenly w-full overflow-hidden"
+    class="py-3 flex items-center justify-evenly w-full overflow-hidden px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12"
   >
     <!-- 1) Name / Email / Phone -->
     <div class="flex flex-col gap-1 min-w-[220px] basis-1/4 min-w-0">
@@ -26,12 +26,14 @@
 
     <!-- 2) Address -->
     <div
-      class="flex items-center gap-2 font-medium text-gray-900 truncate min-w-[220px] basis-1/4 min-w-0"
+      class="flex items-start gap-2 font-medium text-gray-900 min-w-[220px] basis-1/4 min-w-0"
     >
-      <i class="pi pi-home text-gray-400 text-xs" />
-      <span class="truncate">{{
-        formatArrayLike(appointment?.appointment_address)
-      }}</span>
+      <i class="pi pi-home text-gray-400 text-xs mt-1 flex-shrink-0" />
+      <span
+        class="line-clamp-2 overflow-hidden text-sm leading-tight hover:text-gray-700 transition-colors"
+        :title="formatArrayLike(appointment?.appointment_address)"
+        >{{ formatArrayLike(appointment?.appointment_address) }}</span
+      >
     </div>
 
     <!-- 3) Status pill (pink) -->
@@ -71,10 +73,11 @@
           v-for="(agent, index) in limitedAgents"
           :key="index"
           :class="[
-            'w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold border-2 border-white shadow-sm',
+            'rounded-full flex items-center justify-center text-sm font-semibold border-2 border-white shadow-sm',
             agentClassWithFallback(agent),
           ]"
           :style="agentStyle(agent)"
+          style="width: 2.5rem; height: 2.5rem"
           :title="getAgentDisplayName(agent)"
         >
           {{ getAgentInitials(agent) }}
@@ -87,7 +90,8 @@
           ref="overflowAnchor"
         >
           <div
-            class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold border-2 border-white bg-gray-200 text-gray-700 shadow-sm"
+            class="rounded-full flex items-center justify-center text-sm font-semibold border-2 border-white bg-gray-200 text-gray-700 shadow-sm"
+            style="width: 2.5rem; height: 2.5rem"
           >
             +{{ extraCount }}
           </div>
@@ -325,7 +329,9 @@ export default {
         // avatar with initials
         const avatar = document.createElement("div");
         avatar.className =
-          "w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-semibold border border-white shadow-sm";
+          "rounded-full flex items-center justify-center text-xs font-semibold border border-white shadow-sm";
+        avatar.style.width = "1.5rem";
+        avatar.style.height = "1.5rem";
         const code = (agent?.code || "").toString().trim().toUpperCase();
         const fullName = `${(agent?.name || "").toString().trim()} ${(
           agent?.surname || ""
@@ -436,3 +442,12 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+</style>

@@ -1,11 +1,24 @@
 <template>
   <div class="bg-white min-h-screen">
     <AppointmentListHeader
-      :total-records="filteredAppointments.length"
       :agents="agentsForHeader"
-      @new-appointment="$emit('new-appointment')"
       @filters-change="onFiltersChange"
     />
+
+    <!-- Count and Create Button Row -->
+    <div class="px-6 pb-4 flex items-center justify-between">
+      <div class="font-bold text-gray-900">
+        {{
+          $t("appointments.count.found", { count: filteredAppointments.length })
+        }}
+      </div>
+      <Button
+        label="Create Appointment"
+        icon="pi pi-plus"
+        @click="$emit('new-appointment')"
+        class="bg-secondary text-white border-secondary hover:bg-secondary/90 px-4 py-2 rounded-md font-medium text-sm flex items-center gap-2"
+      />
+    </div>
 
     <!-- Loading State -->
     <div v-if="loading" class="flex justify-center items-center py-8">
@@ -13,12 +26,13 @@
     </div>
 
     <!-- Appointment List -->
-    <div v-else class="bg-white">
+    <div v-else class="bg-white px-6">
       <DataTable
         :value="filteredAppointments"
         :rows="rows"
         :paginator="true"
         :rowsPerPageOptions="[5, 10, 20, 50]"
+        :showHeader="false"
         class="p-datatable-sm"
         @page="onPageChange"
       >
@@ -41,6 +55,7 @@ import AppointmentListHeader from "./AppointmentListHeader.vue";
 import AppointmentRow from "./AppointmentRow.vue";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
+import Button from "primevue/button";
 import { AgentService } from "../../api/services/agent.service";
 
 export default {
@@ -49,6 +64,7 @@ export default {
     AppointmentRow,
     DataTable,
     Column,
+    Button,
   },
   name: "AppointmentList",
   props: {
@@ -269,6 +285,10 @@ export default {
 </script>
 
 <style scoped>
+/* Hide table header */
+:deep(.p-datatable-thead) {
+  display: none !important;
+}
 /* Add vertical spacing between table rows and remove default collapse */
 :deep(.p-datatable-table) {
   border-collapse: separate;
@@ -282,14 +302,29 @@ export default {
 /* Card styling on the single cell */
 :deep(.p-datatable-tbody > tr.p-row-even > td.app-row-cell) {
   background-color: theme("colors.primary");
-  border: 1px solid #e5e7eb; /* gray-200 */
+  border: 2px solid #e5e7eb; /* gray-200 */
   border-radius: 12px;
   overflow: hidden;
 }
 :deep(.p-datatable-tbody > tr.p-row-odd > td.app-row-cell) {
   background-color: #ffffff;
-  border: 1px solid #e5e7eb;
+  border: 2px solid #e5e7eb;
   border-radius: 12px;
   overflow: hidden;
+}
+/* DataTable Paginator Rows Per Page Dropdown */
+:deep(.p-paginator .p-paginator-rpp-options .p-dropdown) {
+  border: 1px solid var(--color-primary) !important;
+  border-radius: 0.375rem;
+}
+
+:deep(.p-paginator .p-dropdown) {
+  border: 1px solid var(--color-primary) !important;
+  border-radius: 0.375rem;
+}
+
+:deep(.p-datatable .p-paginator .p-dropdown) {
+  border: 1px solid var(--color-primary) !important;
+  border-radius: 0.375rem;
 }
 </style>

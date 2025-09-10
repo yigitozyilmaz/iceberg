@@ -1,26 +1,34 @@
 <template>
-  <div class="p-4">
-    <div class="flex justify-between items-center mb-3">
-      <!-- Agent Filters -->
-      <div class="flex items-center gap-3 min-w-0">
-        <div v-if="computedAgents.length" class="flex -space-x-2">
+  <div class="px-6 py-4">
+    <!-- Filters Row -->
+    <div class="flex items-center justify-between mb-4">
+      <!-- Left Side: Agent Filters and Other Filters -->
+      <div class="flex items-center gap-4">
+        <!-- Agent Filters -->
+        <div
+          v-if="computedAgents.length"
+          class="flex -space-x-2"
+          style="height: 2.5rem"
+        >
           <div
             v-for="(agent, index) in limitedAgents"
             :key="agent.key || index"
             :title="getAgentDisplayName(agent)"
             :class="[
-              'w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold border-2 border-white shadow-sm cursor-pointer select-none',
+              'rounded-full flex items-center justify-center text-sm font-semibold border-2 border-white shadow-sm cursor-pointer select-none',
               agentClassWithFallback(agent),
               isSelected(agent) ? 'ring-2 ring-offset-1 ring-gray-700' : '',
             ]"
             :style="agentStyle(agent)"
+            style="width: 2.5rem; height: 2.5rem"
             @click="toggleAgent(agentKey(agent))"
           >
             {{ getAgentLabel(agent) }}
           </div>
           <div v-if="extraCount > 0" class="relative" ref="overflowRef">
             <div
-              class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold border-2 border-white bg-gray-200 text-gray-700 shadow-sm cursor-pointer"
+              class="rounded-full flex items-center justify-center text-sm font-semibold border-2 border-white bg-gray-200 text-gray-700 shadow-sm cursor-pointer"
+              style="width: 2.5rem; height: 2.5rem"
               @click.stop="toggleOverflow()"
             >
               +{{ extraCount }}
@@ -42,11 +50,12 @@
               >
                 <div
                   :class="[
-                    'w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-semibold border border-white shadow-sm',
+                    'rounded-full flex items-center justify-center text-xs font-semibold border border-white shadow-sm',
                     agentClassWithFallback(agent),
                     isSelected(agent) ? 'ring-1 ring-gray-700' : '',
                   ]"
                   :style="agentStyle(agent)"
+                  style="width: 1.5rem; height: 1.5rem"
                 >
                   {{ getAgentLabel(agent) }}
                 </div>
@@ -63,63 +72,61 @@
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Search and Create -->
-      <div class="flex items-center gap-2">
+        <!-- Status Filter -->
         <Dropdown
           v-model="filters.status"
           :options="statusOptions"
           optionLabel="label"
           optionValue="value"
           placeholder="All Statuses"
-          class="w-[140px]"
+          style="width: 16rem; border: 2px solid var(--color-primary)"
+          class="custom-dropdown text-sm p-1"
           @change="emitFilters"
         />
-        <div class="flex items-center gap-1">
+
+        <!-- Date Range Filters -->
+        <div class="flex items-center gap-4">
           <Calendar
             v-model="filters.dateRange[0]"
+            style="width: 18rem"
+            class="calendar-input"
             :showTime="true"
             :placeholder="$t('appointments.placeholders.dateFrom')"
-            class="w-[160px]"
             :showIcon="true"
             @date-select="emitFilters"
           />
           <Calendar
             v-model="filters.dateRange[1]"
+            style="width: 18rem"
+            class="calendar-input"
             :showTime="true"
             :placeholder="$t('appointments.placeholders.dateTo')"
-            class="w-[160px]"
             :showIcon="true"
             @date-select="emitFilters"
           />
         </div>
-        <div class="relative">
-          <span class="p-input-icon-right">
-            <i
-              class="pi pi-search absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs"
-            />
-            <InputText
-              v-model="filters.search"
-              :placeholder="$t('appointments.placeholders.search')"
-              class="w-[180px] pl-2 pr-6 py-1.5 text-sm"
-              @input="debounceSearch"
-            />
-          </span>
-        </div>
-        <Button
-          :label="$t('appointments.create')"
-          icon="pi pi-plus"
-          @click="$emit('new-appointment')"
-          class="p-button-sm"
-        />
+      </div>
+
+      <!-- Right Side: Search -->
+      <div class="relative">
+        <span class="p-input-icon-right">
+          <i
+            class="pi pi-search absolute top-1/2 -translate-y-1/2 text-sm border-2 border-secondary rounded-r-md right-0 custom-search-icon"
+            style="padding: 0.6rem"
+          />
+          <InputText
+            v-model="filters.search"
+            :placeholder="$t('appointments.placeholders.search')"
+            class="w-96 pl-3 pr-8 py-2 text-base border-2 border-primary rounded-md custom-search text-center"
+            @input="debounceSearch"
+          />
+        </span>
       </div>
     </div>
 
-    <!-- Total Count -->
-    <div class="text-xs text-gray-600 mb-3">
-      {{ $t("appointments.count.found", { count: totalRecords }) }}
-    </div>
+    <!-- Divider -->
+    <div class="border-b border-gray-200 mt-4"></div>
   </div>
 </template>
 
@@ -127,10 +134,6 @@
 export default {
   name: "AppointmentListHeader",
   props: {
-    totalRecords: {
-      type: Number,
-      required: true,
-    },
     agents: {
       type: Array,
       default: () => [],
@@ -173,19 +176,6 @@ export default {
     extraCount() {
       const extra = this.computedAgents.length - 5;
       return extra > 0 ? extra : 0;
-    },
-  },
-  watch: {
-    totalRecords(val) {
-      // Debug for header count and filters
-      // Remove later
-      // eslint-disable-next-line no-console
-      console.log(
-        "[Header] totalRecords:",
-        val,
-        "current filters:",
-        this.filters
-      );
     },
   },
   methods: {
@@ -294,26 +284,63 @@ export default {
       }, 300);
     },
   },
-  emits: ["new-appointment", "filters-change"],
+  emits: ["filters-change"],
 };
 </script>
 
 <style scoped>
-:deep(.p-dropdown) {
-  height: 32px;
+/* Dropdown Styling */
+:deep(.custom-dropdown .p-dropdown) {
+  height: 40px;
+  border: 2px solid var(--color-primary) !important;
+  border-radius: 0.375rem;
+  font-size: 16px;
 }
-:deep(.p-dropdown-label) {
+:deep(.custom-dropdown .p-dropdown-label) {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
+  color: black;
+  font-size: 16px;
 }
+:deep(.custom-dropdown .p-dropdown-items .p-dropdown-item) {
+  color: black;
+  font-size: 16px;
+}
+:deep(.custom-dropdown .p-dropdown-items .p-dropdown-item:hover) {
+  background-color: var(--color-secondary) !important;
+  color: white;
+}
+:deep(.custom-dropdown .p-dropdown-label.p-placeholder) {
+  color: black;
+}
+
+/* Calendar Styling */
 :deep(.p-calendar) {
-  height: 32px;
+  border: 2px solid var(--color-primary);
+  border-radius: 0.375rem;
 }
 :deep(.p-calendar .p-inputtext) {
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-radius: 0.375rem;
 }
-:deep(.p-inputtext) {
-  height: 32px;
+
+:deep(.calendar-input .p-inputtext::placeholder) {
+  text-align: left;
+  font-size: 8px;
+  position: relative;
+  top: -10px;
+  padding-left: 10px;
+  color: black;
+}
+
+/* Search Input Styling */
+:deep(.custom-search.p-inputtext) {
+  border: 2px solid var(--color-primary);
+  border-radius: 0.375rem;
+  font-size: 16px;
+}
+:deep(.custom-search.p-inputtext::placeholder) {
+  color: black;
 }
 </style>
