@@ -6,7 +6,13 @@ export default {
     "./node_modules/primevue/**/*.{vue,js,ts,jsx,tsx}"
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: 'var(--color-primary)',
+        secondary: 'var(--color-secondary)',
+        tertiary: 'var(--color-tertiary)'
+      },
+    },
   },
   plugins: [],
 }

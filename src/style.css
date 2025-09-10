@@ -3,3 +3,9 @@
 @tailwind utilities;
 
 /* PrimeVue tema özelleştirmeleri buraya gelecek */
+
+:root {
+  --color-primary: #f8f4f4; /* app background gray */
+  --color-secondary: #ed1e80; /* brand pink */
+  --color-tertiary: #000000; /* black */
+}

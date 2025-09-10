@@ -74,26 +74,22 @@
             'w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold border-2 border-white shadow-sm',
             agentClassWithFallback(agent),
           ]"
+          :style="agentStyle(agent)"
           :title="getAgentDisplayName(agent)"
         >
           {{ getAgentInitials(agent) }}
         </div>
-        <div v-if="extraCount > 0" class="relative group">
+        <div
+          v-if="extraCount > 0"
+          class="relative"
+          @mouseenter="openOverflow"
+          @mouseleave="startClose"
+          ref="overflowAnchor"
+        >
           <div
             class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold border-2 border-white bg-gray-200 text-gray-700 shadow-sm"
           >
             +{{ extraCount }}
-          </div>
-          <div
-            class="hidden group-hover:block absolute left-1/2 -translate-x-1/2 bottom-full mb-2 bg-white border border-gray-200 rounded-md shadow-lg p-2 text-xs text-gray-700 whitespace-nowrap z-10"
-          >
-            <div
-              v-for="(agent, i) in overflowAgents"
-              :key="i"
-              class="leading-5"
-            >
-              {{ getAgentDisplayName(agent) }}
-            </div>
           </div>
         </div>
       </div>
@@ -109,6 +105,21 @@ export default {
       type: Object,
       required: true,
     },
+    agentColorByCode: {
+      type: Object,
+      default: () => ({}),
+    },
+    agentColorByName: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
+  data() {
+    return {
+      // floating tooltip element and close timer
+      tooltipEl: null,
+      _closeTimer: null,
+    };
   },
   computed: {
     isUpcoming() {
@@ -137,7 +148,7 @@ export default {
       return "bg-white text-[#4CAF50]";
     },
     statusPillClass() {
-      return "bg-[#FF2D87]";
+      return "bg-secondary";
     },
     timeUntilLabel() {
       if (this.appointment?.is_cancelled) return null;
@@ -228,7 +239,17 @@ export default {
       return str && str.trim() !== "" ? str : "unknown";
     },
     agentClassWithFallback(agent) {
-      const colorToken = agent?.color || this.randomColor();
+      const code = (agent?.code || "").toString().trim().toUpperCase();
+      const fullName = `${(agent?.name || "").toString().trim()} ${(
+        agent?.surname || ""
+      )
+        .toString()
+        .trim()}`
+        .trim()
+        .toLowerCase();
+      const byCode = code ? this.agentColorByCode[code] : null;
+      const byName = fullName ? this.agentColorByName[fullName] : null;
+      const colorToken = byCode || byName || agent?.color || "gray";
       const colors = {
         yellow: "bg-yellow-300 text-yellow-900",
         orange: "bg-orange-300 text-orange-900",
@@ -238,20 +259,136 @@ export default {
         pink: "bg-pink-300 text-pink-900",
         gray: "bg-gray-300 text-gray-700",
       };
-      return colors[colorToken] || colors.gray;
+      if (colors[colorToken]) return colors[colorToken];
+      return colors.gray;
     },
-    randomColor() {
-      const palette = [
-        "yellow",
-        "orange",
-        "purple",
-        "green",
-        "blue",
-        "pink",
-        "gray",
-      ];
-      const index = Math.floor(Math.random() * palette.length);
-      return palette[index];
+    agentStyle(agent) {
+      const code = (agent?.code || "").toString().trim().toUpperCase();
+      const fullName = `${(agent?.name || "").toString().trim()} ${(
+        agent?.surname || ""
+      )
+        .toString()
+        .trim()}`
+        .trim()
+        .toLowerCase();
+      const byCode = code ? this.agentColorByCode[code] : null;
+      const byName = fullName ? this.agentColorByName[fullName] : null;
+      const colorToken = byCode || byName || agent?.color || null;
+      if (typeof colorToken === "string" && colorToken.startsWith("#")) {
+        return {
+          backgroundColor: colorToken,
+          color: this.contrastText(colorToken),
+        };
+      }
+      return null;
+    },
+    contrastText(hex) {
+      try {
+        const clean = hex.replace("#", "");
+        const r = parseInt(clean.substring(0, 2), 16);
+        const g = parseInt(clean.substring(2, 4), 16);
+        const b = parseInt(clean.substring(4, 6), 16);
+        const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+        return luminance > 140 ? "#111827" /* gray-900 */ : "#ffffff";
+      } catch (e) {
+        return "#111827";
+      }
+    },
+    // randomColor removed: renkler API'den mapleniyor
+    openOverflow() {
+      // create floating tooltip appended to body to avoid clipping/stacking issues
+      if (this.tooltipEl) return;
+      const anchor = this.$refs.overflowAnchor;
+      if (!anchor) return;
+      const rect = anchor.getBoundingClientRect();
+      const el = document.createElement("div");
+      el.className =
+        "fixed bg-white border border-gray-200 rounded-md shadow-lg p-2 text-xs text-gray-700 whitespace-nowrap z-[9999]";
+      el.style.left = `${rect.left + rect.width / 2}px`;
+      el.style.top = `${rect.bottom + 8}px`;
+      el.style.transform = "translateX(-50%)";
+      el.style.minWidth = "140px";
+
+      const title = document.createElement("div");
+      title.className = "px-2 py-1 text-[11px] text-gray-500";
+      // Use i18n if available
+      try {
+        title.textContent = this.$t("appointments.labels.otherAgents");
+      } catch (e) {
+        title.textContent = "Other agents";
+      }
+      el.appendChild(title);
+
+      for (const agent of this.overflowAgents) {
+        const row = document.createElement("div");
+        row.className = "flex items-center gap-2 px-2 py-0.5 leading-5";
+        // avatar with initials
+        const avatar = document.createElement("div");
+        avatar.className =
+          "w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-semibold border border-white shadow-sm";
+        const code = (agent?.code || "").toString().trim().toUpperCase();
+        const fullName = `${(agent?.name || "").toString().trim()} ${(
+          agent?.surname || ""
+        )
+          .toString()
+          .trim()}`
+          .trim()
+          .toLowerCase();
+        const byCode = code ? this.agentColorByCode[code] : null;
+        const byName = fullName ? this.agentColorByName[fullName] : null;
+        const colorToken = byCode || byName || agent?.color || null;
+        const tokenHexMap = {
+          yellow: "#fde047",
+          orange: "#fb923c",
+          purple: "#c084fc",
+          green: "#86efac",
+          blue: "#93c5fd",
+          pink: "#f9a8d4",
+          gray: "#e5e7eb",
+        };
+        let bgHex = null;
+        if (typeof colorToken === "string" && colorToken.startsWith("#")) {
+          bgHex = colorToken;
+        } else if (tokenHexMap[colorToken]) {
+          bgHex = tokenHexMap[colorToken];
+        }
+        if (bgHex) {
+          avatar.style.backgroundColor = bgHex;
+          avatar.style.color = this.contrastText(bgHex);
+        } else {
+          avatar.className += " bg-gray-300 text-gray-700";
+        }
+        avatar.textContent = this.getAgentInitials(agent);
+        row.appendChild(avatar);
+        const label = document.createElement("span");
+        label.textContent = this.getAgentDisplayName(agent);
+        row.appendChild(label);
+        el.appendChild(row);
+      }
+
+      // keep open when hovering tooltip itself
+      el.addEventListener("mouseenter", () => {
+        if (this._closeTimer) {
+          clearTimeout(this._closeTimer);
+          this._closeTimer = null;
+        }
+      });
+      el.addEventListener("mouseleave", () => this.startClose());
+
+      // no explicit Close button; hover-out closes it
+
+      document.body.appendChild(el);
+      this.tooltipEl = el;
+    },
+    startClose() {
+      // delay slightly to allow moving into the tooltip if needed in future
+      if (this._closeTimer) clearTimeout(this._closeTimer);
+      this._closeTimer = setTimeout(() => {
+        if (this.tooltipEl) {
+          document.body.removeChild(this.tooltipEl);
+          this.tooltipEl = null;
+        }
+      }, 80);
     },
     getAgentInitials(agent) {
       const firstName = Array.isArray(agent?.name)

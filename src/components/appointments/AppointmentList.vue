@@ -2,6 +2,7 @@
   <div class="bg-white min-h-screen">
     <AppointmentListHeader
       :total-records="filteredAppointments.length"
+      :agents="agentsForHeader"
       @new-appointment="$emit('new-appointment')"
       @filters-change="onFiltersChange"
     />
@@ -23,7 +24,11 @@
       >
         <Column :bodyClass="'app-row-cell'">
           <template #body="slotProps">
-            <AppointmentRow :appointment="slotProps.data" />
+            <AppointmentRow
+              :appointment="slotProps.data"
+              :agent-color-by-code="agentColorByCode"
+              :agent-color-by-name="agentColorByName"
+            />
           </template>
         </Column>
       </DataTable>
@@ -36,6 +41,7 @@ import AppointmentListHeader from "./AppointmentListHeader.vue";
 import AppointmentRow from "./AppointmentRow.vue";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
+import { AgentService } from "../../api/services/agent.service";
 
 export default {
   components: {
@@ -60,7 +66,37 @@ export default {
       filteredAppointments: [],
       currentFilters: {},
       rows: 10,
+      allAgents: [],
     };
+  },
+  computed: {
+    agentsForHeader() {
+      return (this.allAgents || []).map((a) => ({
+        key: (a.code || "").toString().trim().toUpperCase() || null,
+        code: a.code || null,
+        name: a.agent_name || a.name || null,
+        surname: a.agent_surname || a.surname || null,
+        color: a.color || null,
+      }));
+    },
+    agentColorByCode() {
+      const map = {};
+      for (const a of this.allAgents || []) {
+        const code = (a.code || "").toString().trim().toUpperCase();
+        if (code) map[code] = a.color || null;
+      }
+      return map;
+    },
+    agentColorByName() {
+      const map = {};
+      for (const a of this.allAgents || []) {
+        const f = (a.agent_name || a.name || "").toString().trim();
+        const l = (a.agent_surname || a.surname || "").toString().trim();
+        const full = `${f} ${l}`.trim().toLowerCase();
+        if (full) map[full] = a.color || null;
+      }
+      return map;
+    },
   },
   watch: {
     appointments: {
@@ -72,6 +108,29 @@ export default {
     },
   },
   methods: {
+    async loadAgents() {
+      try {
+        const response = await AgentService.getAgents();
+        this.allAgents = response.data || [];
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error("Failed to load agents", error);
+        this.allAgents = [];
+      }
+    },
+    normalizeAgentKey(agent) {
+      const code = (agent?.code || "").toString().trim().toUpperCase();
+      if (code) return code;
+      const f = (agent?.name || "").toString().trim();
+      const l = (agent?.surname || "").toString().trim();
+      if (f || l) {
+        const fi = f ? f[0] : "";
+        const li = l ? l[0] : "";
+        const initials = (fi + li).toUpperCase();
+        return initials || null;
+      }
+      return null;
+    },
     onPageChange(event) {
       this.rows = event.rows;
     },
@@ -160,13 +219,12 @@ export default {
         );
       }
 
-      // Agent filter
+      // Agent filter (AND logic: appointment must include all selected agents)
       if (this.currentFilters.agents?.length) {
-        filtered = filtered.filter((appointment) =>
-          appointment.agents?.some((agent) =>
-            this.currentFilters.agents.includes(agent.code)
-          )
-        );
+        filtered = filtered.filter((appointment) => {
+          const keys = this.appointmentAgentKeys(appointment);
+          return this.currentFilters.agents.every((key) => keys.includes(key));
+        });
       }
 
       // Global sort by nearest date (upcoming earliest first)
@@ -174,8 +232,39 @@ export default {
 
       this.filteredAppointments = filtered;
     },
+    appointmentAgentKeys(appointment) {
+      const keys = [];
+      // Structured agents
+      if (Array.isArray(appointment?.agents)) {
+        for (const a of appointment.agents) {
+          const k = this.normalizeAgentKey(a);
+          if (k) keys.push(k);
+        }
+      }
+      // Fallback: parallel name/surname arrays or single strings
+      const names = Array.isArray(appointment?.agent_name)
+        ? appointment.agent_name
+        : appointment?.agent_name
+        ? [appointment.agent_name]
+        : [];
+      const surnames = Array.isArray(appointment?.agent_surname)
+        ? appointment.agent_surname
+        : appointment?.agent_surname
+        ? [appointment.agent_surname]
+        : [];
+      const len = Math.max(names.length, surnames.length);
+      for (let i = 0; i < len; i++) {
+        const obj = { name: names[i] || null, surname: surnames[i] || null };
+        const k = this.normalizeAgentKey(obj); // will return initials
+        if (k) keys.push(k);
+      }
+      return keys;
+    },
   },
   emits: ["new-appointment"],
+  mounted() {
+    this.loadAgents();
+  },
 };
 </script>
 
@@ -192,7 +281,7 @@ export default {
 }
 /* Card styling on the single cell */
 :deep(.p-datatable-tbody > tr.p-row-even > td.app-row-cell) {
-  background-color: #f7f8fb;
+  background-color: theme("colors.primary");
   border: 1px solid #e5e7eb; /* gray-200 */
   border-radius: 12px;
   overflow: hidden;

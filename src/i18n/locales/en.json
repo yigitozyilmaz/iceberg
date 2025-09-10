@@ -4,6 +4,7 @@
     "loading": "Loading...",
     "save": "Save",
     "cancel": "Cancel",
+    "close": "Close",
     "error": "Error",
     "success": "Success",
     "actions": "Actions",
@@ -46,6 +47,9 @@
     },
     "count": {
       "found": "{count} Appointments found"
+    },
+    "labels": {
+      "otherAgents": "Other agents"
     }
   }
 }
