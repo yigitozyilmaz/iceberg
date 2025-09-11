@@ -5,72 +5,80 @@
       <!-- Left Side: Agent Filters and Other Filters -->
       <div class="flex items-center gap-4">
         <!-- Agent Filters -->
-        <div
-          v-if="computedAgents.length"
-          class="flex -space-x-2"
-          style="height: 2.5rem"
-        >
+        <div class="flex -space-x-2" style="height: 2.5rem">
+          <!-- Loading Spinner when no agents -->
           <div
-            v-for="(agent, index) in limitedAgents"
-            :key="agent.key || index"
-            :title="getAgentDisplayName(agent)"
-            :class="[
-              'rounded-full flex items-center justify-center text-sm font-semibold border-2 border-white shadow-sm cursor-pointer select-none',
-              agentClassWithFallback(agent),
-              isSelected(agent) ? 'ring-2 ring-offset-1 ring-gray-700' : '',
-            ]"
-            :style="agentStyle(agent)"
+            v-if="!computedAgents || computedAgents.length === 0"
+            class="flex items-center justify-center"
             style="width: 2.5rem; height: 2.5rem"
-            @click="toggleAgent(agentKey(agent))"
           >
-            {{ getAgentLabel(agent) }}
+            <i class="pi pi-spin pi-spinner text-gray-600"></i>
           </div>
-          <div v-if="extraCount > 0" class="relative" ref="overflowRef">
+
+          <!-- Agent Avatars when loaded -->
+          <template v-else>
             <div
-              class="rounded-full flex items-center justify-center text-sm font-semibold border-2 border-white bg-gray-200 text-gray-700 shadow-sm cursor-pointer"
+              v-for="(agent, index) in limitedAgents"
+              :key="agent.key || index"
+              :title="getAgentDisplayName(agent)"
+              :class="[
+                'rounded-full flex items-center justify-center text-sm font-semibold border-2 border-white shadow-sm cursor-pointer select-none',
+                agentClassWithFallback(agent),
+                isSelected(agent) ? 'ring-2 ring-offset-1 ring-gray-700' : '',
+              ]"
+              :style="agentStyle(agent)"
               style="width: 2.5rem; height: 2.5rem"
-              @click.stop="toggleOverflow()"
+              @click="toggleAgent(agentKey(agent))"
             >
-              +{{ extraCount }}
+              {{ getAgentLabel(agent) }}
             </div>
-            <div
-              v-show="overflowOpen"
-              class="absolute left-1/2 -translate-x-1/2 top-full mt-2 bg-primary border border-gray-200 rounded-md shadow-lg p-2 text-xs text-gray-700 whitespace-nowrap z-20 w-56"
-              @click.stop
-            >
+            <div v-if="extraCount > 0" class="relative" ref="overflowRef">
               <div
-                class="px-2 py-1 text-[11px] text-gray-500"
-                v-text="$t('appointments.labels.otherAgents')"
-              />
+                class="rounded-full flex items-center justify-center text-sm font-semibold border-2 border-white bg-gray-200 text-gray-700 shadow-sm cursor-pointer"
+                style="width: 2.5rem; height: 2.5rem"
+                @click.stop="toggleOverflow()"
+              >
+                +{{ extraCount }}
+              </div>
               <div
-                v-for="(agent, i) in overflowAgents"
-                :key="agent.key || i"
-                class="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-50 cursor-pointer"
-                @click="toggleAgent(agentKey(agent))"
+                v-show="overflowOpen"
+                class="absolute left-1/2 -translate-x-1/2 top-full mt-2 bg-primary border border-gray-200 rounded-md shadow-lg p-2 text-xs text-gray-700 whitespace-nowrap z-20 w-56"
+                @click.stop
               >
                 <div
-                  :class="[
-                    'rounded-full flex items-center justify-center text-xs font-semibold border border-white shadow-sm',
-                    agentClassWithFallback(agent),
-                    isSelected(agent) ? 'ring-1 ring-gray-700' : '',
-                  ]"
-                  :style="agentStyle(agent)"
-                  style="width: 1.5rem; height: 1.5rem"
+                  class="px-2 py-1 text-[11px] text-gray-500"
+                  v-text="$t('appointments.labels.otherAgents')"
+                />
+                <div
+                  v-for="(agent, i) in overflowAgents"
+                  :key="agent.key || i"
+                  class="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-50 cursor-pointer"
+                  @click="toggleAgent(agentKey(agent))"
                 >
-                  {{ getAgentLabel(agent) }}
+                  <div
+                    :class="[
+                      'rounded-full flex items-center justify-center text-xs font-semibold border border-white shadow-sm',
+                      agentClassWithFallback(agent),
+                      isSelected(agent) ? 'ring-1 ring-gray-700' : '',
+                    ]"
+                    :style="agentStyle(agent)"
+                    style="width: 1.5rem; height: 1.5rem"
+                  >
+                    {{ getAgentLabel(agent) }}
+                  </div>
+                  <div class="truncate">{{ getAgentDisplayName(agent) }}</div>
                 </div>
-                <div class="truncate">{{ getAgentDisplayName(agent) }}</div>
-              </div>
-              <div class="mt-2 flex justify-end">
-                <button
-                  class="px-2 py-1 text-xs rounded-md bg-black text-white hover:bg-black/90 border border-black"
-                  @click="overflowOpen = false"
-                >
-                  {{ $t("common.close") }}
-                </button>
+                <div class="mt-2 flex justify-end">
+                  <button
+                    class="px-2 py-1 text-xs rounded-md bg-black text-white hover:bg-black/90 border border-black"
+                    @click="overflowOpen = false"
+                  >
+                    {{ $t("common.close") }}
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+          </template>
         </div>
 
         <!-- Status Filter -->
