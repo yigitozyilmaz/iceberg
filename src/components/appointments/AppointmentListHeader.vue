@@ -88,7 +88,6 @@
           optionLabel="label"
           optionValue="value"
           placeholder="All Statuses"
-          style="width: 16rem; border: 2px solid var(--color-primary)"
           class="custom-dropdown text-sm p-1"
           @change="emitFilters"
         />
@@ -297,29 +296,19 @@ export default {
 </script>
 
 <style scoped>
-/* Dropdown Styling */
-:deep(.custom-dropdown .p-dropdown) {
-  height: 40px;
-  border: 2px solid var(--color-primary) !important;
-  border-radius: 0.375rem;
-  font-size: 16px;
+.custom-dropdown {
+  width: 16rem;
+  border: 2px solid var(--color-primary);
+}
+.custom-dropdown:focus-within {
+  border: 2px solid var(--color-secondary) !important;
+  box-shadow: 0 0 0 1px var(--color-secondary) !important;
 }
 :deep(.custom-dropdown .p-dropdown-label) {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
   color: black;
   font-size: 16px;
-}
-:deep(.custom-dropdown .p-dropdown-items .p-dropdown-item) {
-  color: black;
-  font-size: 16px;
-}
-:deep(.custom-dropdown .p-dropdown-items .p-dropdown-item:hover) {
-  background-color: var(--color-secondary) !important;
-  color: white;
-}
-:deep(.custom-dropdown .p-dropdown-label.p-placeholder) {
-  color: black;
 }
 
 /* Calendar Styling */
@@ -331,6 +320,18 @@ export default {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
   border-radius: 0.375rem;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+:deep(.p-calendar:focus-within) {
+  border: 2px solid var(--color-secondary) !important;
+  box-shadow: 0 0 0 1px var(--color-secondary) !important;
+}
+:deep(.p-calendar .p-inputtext:focus) {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 :deep(.calendar-input .p-inputtext::placeholder) {
@@ -347,6 +348,12 @@ export default {
   border: 2px solid var(--color-primary);
   border-radius: 0.375rem;
   font-size: 16px;
+  transition: all 0.2s ease;
+}
+:deep(.custom-search.p-inputtext:focus) {
+  border: 2px solid var(--color-secondary) !important;
+  box-shadow: 0 0 0 1px var(--color-secondary) !important;
+  outline: none !important;
 }
 :deep(.custom-search.p-inputtext::placeholder) {
   color: black;

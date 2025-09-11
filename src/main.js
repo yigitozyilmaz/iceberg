@@ -4,6 +4,11 @@ import ToastService from 'primevue/toastservice'
 import { createI18n } from 'vue-i18n'
 import App from './App.vue'
 
+// PrimeVue Theme - Pink 500
+import 'primevue/resources/themes/lara-light-pink/theme.css'
+import 'primevue/resources/primevue.min.css'
+import 'primeicons/primeicons.css'
+
 // PrimeVue Components
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'

@@ -6,8 +6,12 @@
 
 :root {
   --color-primary: #f8f4f4; /* app background gray */
-  --color-secondary: #ed1e80; /* brand pink */
+  --color-secondary: #ec4899; /* PrimeVue pink-500 */
   --color-tertiary: #000000; /* black */
+
+  /* PrimeVue tema özelleştirmeleri */
+  --p-primary-color: #ec4899;
+  --p-primary-contrast-color: #ffffff;
 }
 html {
   font-size: 10px; /* Mobile */
