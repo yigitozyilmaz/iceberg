@@ -18,6 +18,7 @@
       :loading="saving"
       :agents="agents"
       @save="saveAppointment"
+      @update:modelValue="onModalClose"
     />
 
     <!-- Toast for notifications -->
@@ -75,6 +76,13 @@ export default {
     editAppointment(appointment) {
       this.selectedAppointment = appointment;
       this.showModal = true;
+    },
+    onModalClose(isOpen) {
+      this.showModal = isOpen;
+      // Modal kapandığında selectedAppointment'ı temizle
+      if (!isOpen) {
+        this.selectedAppointment = null;
+      }
     },
     async saveAppointment(formData) {
       try {

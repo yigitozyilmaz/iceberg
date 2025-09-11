@@ -36,11 +36,12 @@ export class AppointmentService extends BaseService {
             cleanData.appointment_date = new Date(appointmentData.appointment_date).toISOString();
         }
 
-        // Contact - contact_id numeric field olarak gönder (Contact dökümanına göre)
+        // Contact - contact_id Airtable record ID array format olarak gönder
         if (appointmentData.contact_id) {
-            const contactId = typeof appointmentData.contact_id === 'string' ?
-                parseInt(appointmentData.contact_id) : appointmentData.contact_id;
-            cleanData.contact_id = contactId;
+            const contactId = appointmentData.contact_id.toString();
+            if (contactId.startsWith('rec') && contactId.length >= 17) {
+                cleanData.contact_id = [contactId]; // Array format
+            }
         }
 
         // Status - boolean field
@@ -75,11 +76,12 @@ export class AppointmentService extends BaseService {
             cleanData.appointment_date = new Date(appointmentData.appointment_date).toISOString();
         }
 
-        // Contact - contact_id numeric field olarak gönder (Contact dökümanına göre)
+        // Contact - contact_id Airtable record ID array format olarak gönder
         if (appointmentData.contact_id) {
-            const contactId = typeof appointmentData.contact_id === 'string' ?
-                parseInt(appointmentData.contact_id) : appointmentData.contact_id;
-            cleanData.contact_id = contactId;
+            const contactId = appointmentData.contact_id.toString();
+            if (contactId.startsWith('rec') && contactId.length >= 17) {
+                cleanData.contact_id = [contactId]; // Array format
+            }
         }
 
         // Status - always include

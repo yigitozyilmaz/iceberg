@@ -1,102 +1,176 @@
 <template>
   <Dialog
     :visible="modelValue"
-    @update:visible="$emit('update:modelValue', $event)"
-    :header="isEdit ? $t('appointments.edit') : $t('appointments.new')"
+    @update:visible="onModalVisibilityChange"
     :modal="true"
     :style="{ width: '32rem', maxWidth: '95vw' }"
     class="appointment-modal"
   >
-    <div class="grid grid-cols-1 gap-3 p-4">
-      <!-- Tarih ve Saat -->
-      <div class="space-y-1">
-        <Calendar
-          v-model="formData.appointment_date"
-          showTime
-          dateFormat="dd/mm/yy"
-          :showIcon="true"
-          class="w-full custom-calendar"
-          :placeholder="$t('appointments.placeholders.date')"
-          :class="{ 'p-invalid': errors.appointment_date }"
-        />
-        <small v-if="errors.appointment_date" class="p-error">{{
-          errors.appointment_date
-        }}</small>
+    <template #header>
+      <div class="flex items-center justify-center gap-2 w-full h-full">
+        <i class="pi pi-calendar-plus text-xl"></i>
+        <span class="text-lg font-semibold">
+          {{ isEdit ? "Edit the Appointment" : "Create an Appointment" }}
+        </span>
       </div>
+    </template>
+    <div class="modal-content-wrapper">
+      <div class="modal-form-content">
+        <!-- 1. Contact Search - En başta -->
+        <div class="space-y-1">
+          <!-- Search Input (Contact seçilmediğinde göster) -->
+          <div v-if="!formData.contact_id" class="relative">
+            <AutoComplete
+              v-model="selectedContact"
+              :suggestions="contactSuggestions"
+              @complete="searchContacts"
+              @item-select="onContactSelect"
+              field="display"
+              :placeholder="$t('appointments.placeholders.searchContact')"
+              class="w-full custom-input"
+              :class="{ 'p-invalid': errors.contact }"
+              :loading="searchingContacts"
+              forceSelection
+            />
+          </div>
 
-      <!-- Adres -->
-      <div class="space-y-1">
-        <InputText
-          v-model="formData.appointment_address"
-          class="w-full custom-input"
-          :class="{ 'p-invalid': errors.appointment_address }"
-          :placeholder="$t('appointments.placeholders.address')"
-        />
-        <small v-if="errors.appointment_address" class="p-error">{{
-          errors.appointment_address
-        }}</small>
-      </div>
+          <!-- Selected Contact Card (Contact seçildiğinde göster) -->
+          <div
+            v-else
+            class="bg-gray-50 p-3 rounded-md border border-gray-200 relative"
+          >
+            <button
+              @click="clearContact"
+              class="absolute top-2 right-2 w-6 h-6 flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-full transition-colors"
+            >
+              <i class="pi pi-times text-xs"></i>
+            </button>
+            <div class="flex items-center gap-3">
+              <i class="pi pi-user text-gray-600"></i>
+              <div class="flex-1">
+                <div class="font-medium text-gray-900">
+                  {{ formData.contact_name }}
+                </div>
+                <div class="text-sm text-gray-600 flex items-center gap-1">
+                  <i class="pi pi-envelope text-xs"></i>
+                  {{ formData.contact_email }}
+                </div>
+                <div class="text-sm text-gray-600 flex items-center gap-1">
+                  <i class="pi pi-phone text-xs"></i>
+                  {{ formData.contact_phone }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <small v-if="errors.contact" class="p-error">{{
+            errors.contact
+          }}</small>
+        </div>
 
-      <!-- Contact Search -->
-      <div class="space-y-1">
-        <AutoComplete
-          v-model="selectedContact"
-          :suggestions="contactSuggestions"
-          @complete="searchContacts"
-          @item-select="onContactSelect"
-          field="display"
-          :placeholder="$t('appointments.placeholders.searchContact')"
-          class="w-full custom-input"
-          :class="{ 'p-invalid': errors.contact }"
-          :loading="searchingContacts"
-          forceSelection
-        />
-        <small v-if="errors.contact" class="p-error">{{
-          errors.contact
-        }}</small>
+        <!-- 2. Address -->
+        <div class="space-y-1">
+          <!-- Create Mode: Always show input -->
+          <InputText
+            v-if="!isEdit"
+            v-model="formData.appointment_address"
+            class="w-full custom-input"
+            :class="{ 'p-invalid': errors.appointment_address }"
+            :placeholder="$t('appointments.placeholders.address')"
+          />
 
-        <!-- Selected Contact Display -->
-        <div
-          v-if="formData.contact_id"
-          class="bg-gray-50 p-3 rounded-md text-sm"
-        >
-          <div class="font-medium">{{ formData.contact_name }}</div>
-          <div class="text-gray-600">{{ formData.contact_email }}</div>
-          <div class="text-gray-600">{{ formData.contact_phone }}</div>
+          <!-- Edit Mode: Show card or input based on editing state -->
+          <div v-else>
+            <!-- Address Input (Address edit modunda göster) -->
+            <div v-if="editingAddress" class="relative">
+              <InputText
+                v-model="formData.appointment_address"
+                class="w-full custom-input"
+                :class="{ 'p-invalid': errors.appointment_address }"
+                :placeholder="$t('appointments.placeholders.address')"
+              />
+            </div>
+
+            <!-- Address Card (Address var ve edit modunda değilse göster) -->
+            <div
+              v-else-if="formData.appointment_address"
+              class="bg-gray-50 p-3 rounded-md border border-gray-200 relative"
+            >
+              <button
+                @click="startEditingAddress"
+                class="absolute top-2 right-2 w-6 h-6 flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-full transition-colors"
+              >
+                <i class="pi pi-times text-xs"></i>
+              </button>
+              <div class="flex items-center gap-3">
+                <i class="pi pi-home text-gray-600"></i>
+                <div class="flex-1">
+                  <div class="font-medium text-gray-900">
+                    {{ formData.appointment_address }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Address Input (Address yoksa göster) -->
+            <InputText
+              v-else
+              v-model="formData.appointment_address"
+              class="w-full custom-input"
+              :class="{ 'p-invalid': errors.appointment_address }"
+              :placeholder="$t('appointments.placeholders.address')"
+            />
+          </div>
+
+          <small v-if="errors.appointment_address" class="p-error">{{
+            errors.appointment_address
+          }}</small>
+        </div>
+
+        <!-- 3. Agents MultiSelect -->
+        <div class="space-y-1">
+          <MultiSelect
+            v-model="formData.agents"
+            :options="agentOptions"
+            optionLabel="label"
+            optionValue="id"
+            display="chip"
+            :filter="true"
+            class="w-full custom-dropdown agent-multiselect"
+            :placeholder="$t('appointments.placeholders.agent')"
+          />
+        </div>
+
+        <!-- 4. Date and Time -->
+        <div class="space-y-1">
+          <Calendar
+            v-model="formData.appointment_date"
+            showTime
+            dateFormat="dd/mm/yy"
+            :showIcon="true"
+            class="w-full custom-calendar"
+            :placeholder="$t('appointments.placeholders.date')"
+            :class="{ 'p-invalid': errors.appointment_date }"
+          />
+          <small v-if="errors.appointment_date" class="p-error">{{
+            errors.appointment_date
+          }}</small>
+        </div>
+
+        <!-- 5. Status (Sadece edit modunda) -->
+        <div v-if="isEdit" class="space-y-1">
+          <Dropdown
+            v-model="statusValue"
+            :options="dynamicStatusOptions"
+            optionLabel="label"
+            optionValue="value"
+            :placeholder="$t('appointments.fields.status')"
+            class="w-full custom-dropdown"
+          />
         </div>
       </div>
 
-      <!-- Agent(s) -->
-      <div class="space-y-1">
-        <MultiSelect
-          v-model="formData.agents"
-          :options="agentOptions"
-          optionLabel="label"
-          optionValue="id"
-          display="chip"
-          :filter="true"
-          class="w-full custom-dropdown"
-          :placeholder="$t('appointments.placeholders.agent')"
-        />
-      </div>
-
-      <!-- Durum (Sadece edit modunda) -->
-      <div v-if="isEdit" class="space-y-1">
-        <Dropdown
-          v-model="statusValue"
-          :options="statusOptions"
-          optionLabel="label"
-          optionValue="value"
-          :placeholder="$t('appointments.fields.status')"
-          class="w-full custom-dropdown"
-        />
-      </div>
-
-      <!-- Notlar -->
-    </div>
-
-    <template #footer>
-      <div class="flex items-center justify-between gap-3 px-4 py-3">
+      <!-- Butonlar - Modal'ın en altında -->
+      <div class="modal-buttons">
         <Button
           :label="$t('common.cancel')"
           icon="pi pi-times"
@@ -112,7 +186,7 @@
           class="save-button secondary"
         />
       </div>
-    </template>
+    </div>
   </Dialog>
 </template>
 
@@ -148,6 +222,7 @@ export default {
       searchingContacts: false,
       allContacts: [],
       contactsLoaded: false,
+      editingAddress: false,
     };
   },
   computed: {
@@ -159,7 +234,7 @@ export default {
       if (isNaN(d.getTime())) return false;
       return d < new Date();
     },
-    statusOptions() {
+    dynamicStatusOptions() {
       // Tarih geçmişse: Completed + Cancelled, değilse: Upcoming + Cancelled
       return this.isPastDate
         ? [
@@ -364,12 +439,22 @@ export default {
     onContactSelect(event) {
       const contact = event.value;
       if (contact) {
-        this.formData.contact_id = contact.id;
+        this.formData.contact_id = contact.airtableId; // Airtable record ID (recXXX format)
         this.formData.contact_name = contact.name;
         this.formData.contact_email = contact.email || "";
         this.formData.contact_phone = contact.phone || "";
         this.selectedContact = contact.display;
       }
+    },
+    clearContact() {
+      this.formData.contact_id = null;
+      this.formData.contact_name = "";
+      this.formData.contact_email = "";
+      this.formData.contact_phone = "";
+      this.selectedContact = null;
+    },
+    startEditingAddress() {
+      this.editingAddress = true;
     },
     validateForm() {
       this.errors = {};
@@ -405,9 +490,33 @@ export default {
 
       this.$emit("save", appointmentData);
     },
+    onModalVisibilityChange(isVisible) {
+      // Modal kapanıyorsa state'leri temizle
+      if (!isVisible) {
+        this.clearAllStates();
+      }
+      // Parent'a modal durumunu bildir
+      this.$emit("update:modelValue", isVisible);
+    },
     closeModal() {
+      // Tüm state'leri temizle
+      this.clearAllStates();
+      // Parent'a modal kapandığını bildir
       this.$emit("update:modelValue", false);
+    },
+    clearAllStates() {
+      // Tüm state'leri temizle
+      this.formData = this.getEmptyForm();
       this.errors = {};
+      this.selectedContact = null;
+      this.contactSuggestions = [];
+      this.statusValue = "upcoming";
+      this.editingAddress = false;
+
+      // Contact search state'ini de temizle
+      this.allContacts = [];
+      this.contactsLoaded = false;
+      this.searchingContacts = false;
     },
   },
 };
@@ -416,13 +525,40 @@ export default {
 <style scoped>
 /* Modal genel stilleri */
 :deep(.appointment-modal .p-dialog-header) {
-  background: linear-gradient(
-    135deg,
-    var(--color-primary) 0%,
-    var(--color-secondary) 100%
-  );
   color: white;
-  border-radius: 0.5rem 0.5rem 0 0;
+
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+/* Modal header content ortala */
+:deep(.appointment-modal .p-dialog-header-content) {
+  width: 100% !important;
+  text-align: center !important;
+}
+
+/* Modal content wrapper - flex layout */
+.modal-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 60vh;
+}
+
+.modal-form-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 :deep(.appointment-modal .p-dialog-header .p-dialog-title) {
@@ -565,24 +701,109 @@ label {
   box-shadow: 0 0 0 3px rgba(31, 41, 55, 0.2) !important;
 }
 
+/* AutoComplete Focus Styling */
+:deep(.p-autocomplete) {
+  border: 1px solid var(--color-primary);
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+}
+
+:deep(.p-autocomplete:focus-within) {
+  border: 2px solid var(--color-secondary) !important;
+}
+
+:deep(.p-autocomplete .p-inputtext) {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+:deep(.p-autocomplete .p-inputtext:focus) {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* MultiSelect Focus Styling */
+:deep(.p-multiselect) {
+  border: 1px solid var(--color-primary);
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+}
+
+:deep(.p-multiselect:focus-within) {
+  border: 2px solid var(--color-secondary) !important;
+  box-shadow: none !important;
+}
+
+:deep(.p-multiselect .p-inputtext) {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+:deep(.p-multiselect .p-inputtext:focus) {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* MultiSelect Chip Styling */
+:deep(.p-multiselect .p-multiselect-token) {
+  background-color: var(--color-secondary) !important;
+  color: white !important;
+  border-radius: 0.375rem !important;
+  padding: 0.25rem 0.5rem !important;
+  margin: 0.125rem !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+}
+
+:deep(.p-multiselect .p-multiselect-token .p-multiselect-token-icon) {
+  color: white !important;
+  font-size: 0.75rem !important;
+}
+
+:deep(.p-multiselect .p-multiselect-token:hover .p-multiselect-token-icon) {
+  color: #fecaca !important;
+}
+
+/* Cancel Button - Black Style */
+:deep(.cancel-button) {
+  background-color: #000000 !important;
+  color: white !important;
+  border: 2px solid #000000 !important;
+}
+
+:deep(.cancel-button:hover) {
+  background-color: #333333 !important;
+  border-color: #333333 !important;
+  color: white !important;
+}
+
+:deep(.cancel-button:focus) {
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2) !important;
+}
+
 /* Save/Update Button - Secondary Style */
-::deep(.save-button.secondary) {
+:deep(.save-button.secondary) {
   background-color: var(--color-secondary) !important;
   color: white !important;
   border: 2px solid var(--color-secondary) !important;
 }
 
-::deep(.save-button.secondary:hover:not(:disabled)) {
-  background-color: #ff3b8a !important;
-  border-color: #ff3b8a !important;
+:deep(.save-button.secondary:hover:not(:disabled)) {
+  background-color: var(--color-secondary) !important;
+
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
-::deep(.save-button.secondary:disabled) {
+:deep(.save-button.secondary:disabled) {
   background: #d1d5db !important;
   color: #9ca3af !important;
   cursor: not-allowed;
+  border: none !important;
   transform: none;
   box-shadow: none;
 }

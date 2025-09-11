@@ -331,45 +331,12 @@ export default {
 }
 .custom-dropdown:focus-within {
   border: 2px solid var(--color-secondary) !important;
-  box-shadow: 0 0 0 1px var(--color-secondary) !important;
 }
 :deep(.custom-dropdown .p-dropdown-label) {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
   color: black;
   font-size: 16px;
-}
-
-/* Calendar Styling */
-:deep(.p-calendar) {
-  border: 2px solid var(--color-primary);
-  border-radius: 0.375rem;
-}
-:deep(.p-calendar .p-inputtext) {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  border-radius: 0.375rem;
-  border: none !important;
-  outline: none !important;
-  box-shadow: none !important;
-}
-:deep(.p-calendar:focus-within) {
-  border: 2px solid var(--color-secondary) !important;
-  box-shadow: 0 0 0 1px var(--color-secondary) !important;
-}
-:deep(.p-calendar .p-inputtext:focus) {
-  border: none !important;
-  outline: none !important;
-  box-shadow: none !important;
-}
-
-:deep(.calendar-input .p-inputtext::placeholder) {
-  text-align: left;
-  font-size: 8px;
-  position: relative;
-  top: -10px;
-  padding-left: 10px;
-  color: black;
 }
 
 /* Search Input Styling */
@@ -381,7 +348,6 @@ export default {
 }
 :deep(.custom-search.p-inputtext:focus) {
   border: 2px solid var(--color-secondary) !important;
-  box-shadow: 0 0 0 1px var(--color-secondary) !important;
   outline: none !important;
 }
 :deep(.custom-search.p-inputtext::placeholder) {
