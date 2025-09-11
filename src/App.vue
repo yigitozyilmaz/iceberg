@@ -4,6 +4,7 @@
     <main class="w-full">
       <AppointmentList
         :appointments="appointments"
+        :agents="agents"
         :loading="loading"
         @new-appointment="showModal = true"
         @edit-appointment="editAppointment"
@@ -15,6 +16,7 @@
       v-model="showModal"
       :appointment="selectedAppointment"
       :loading="saving"
+      :agents="agents"
       @save="saveAppointment"
     />
 
@@ -27,6 +29,7 @@
 import AppointmentList from "./components/appointments/AppointmentList.vue";
 import AppointmentModal from "./components/appointments/AppointmentModal.vue";
 import { AppointmentService } from "./api/services/appointment.service";
+import { AgentService } from "./api/services/agent.service";
 
 export default {
   name: "App",
@@ -37,6 +40,7 @@ export default {
   data() {
     return {
       appointments: [],
+      agents: [],
       loading: true,
       saving: false,
       showModal: false,
@@ -50,7 +54,6 @@ export default {
         const response = await AppointmentService.getAppointments();
         this.appointments = response.data;
       } catch (error) {
-        console.error("Error:", error);
         this.$toast.add({
           severity: "error",
           summary: this.$t("common.error"),
@@ -59,6 +62,14 @@ export default {
         });
       } finally {
         this.loading = false;
+      }
+    },
+    async loadAgents() {
+      try {
+        const response = await AgentService.getAgents();
+        this.agents = response.data || [];
+      } catch (error) {
+        this.agents = [];
       }
     },
     editAppointment(appointment) {
@@ -92,7 +103,6 @@ export default {
         this.showModal = false;
         this.selectedAppointment = null;
       } catch (error) {
-        console.error("Error:", error);
         this.$toast.add({
           severity: "error",
           summary: this.$t("common.error"),
@@ -104,8 +114,8 @@ export default {
       }
     },
   },
-  mounted() {
-    this.loadAppointments();
+  async mounted() {
+    await Promise.all([this.loadAppointments(), this.loadAgents()]);
   },
 };
 </script>

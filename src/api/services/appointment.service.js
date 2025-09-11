@@ -14,7 +14,7 @@ export class AppointmentService extends BaseService {
     }
 
     static async createAppointment(appointmentData) {
-        const requiredFields = ['contact_name', 'contact_email', 'appointment_date', 'appointment_address'];
+        const requiredFields = ['appointment_date', 'appointment_address'];
         const missingFields = requiredFields.filter(field => !appointmentData[field]);
 
         if (missingFields.length > 0) {
@@ -23,11 +23,84 @@ export class AppointmentService extends BaseService {
             });
         }
 
-        return this.create(appointmentData);
+        // Airtable için uygun format düzenle - SADECE manual fields
+        // Computed fields gönderme: appointment_id, contact_name, contact_surname, contact_email, contact_phone, agent_name, agent_surname
+        const cleanData = {};
+
+        // Basic appointment fields
+        if (appointmentData.appointment_address) {
+            cleanData.appointment_address = appointmentData.appointment_address.toString();
+        }
+
+        if (appointmentData.appointment_date) {
+            cleanData.appointment_date = new Date(appointmentData.appointment_date).toISOString();
+        }
+
+        // Contact - contact_id numeric field olarak gönder (Contact dökümanına göre)
+        if (appointmentData.contact_id) {
+            const contactId = typeof appointmentData.contact_id === 'string' ?
+                parseInt(appointmentData.contact_id) : appointmentData.contact_id;
+            cleanData.contact_id = contactId;
+        }
+
+        // Status - boolean field
+        if (typeof appointmentData.is_cancelled !== 'undefined') {
+            cleanData.is_cancelled = Boolean(appointmentData.is_cancelled);
+        }
+
+        // Agents - linked records array format (örneğe göre agent_id) - SADECE VALID ID'ler
+        if (appointmentData.agents && Array.isArray(appointmentData.agents)) {
+            const validAgents = appointmentData.agents
+                .filter(Boolean)
+                .filter(id => typeof id === 'string' && id.startsWith('rec') && id.length >= 17);
+            if (validAgents.length > 0) {
+                cleanData.agent_id = validAgents; // agent_id array format
+            }
+        }
+
+        return this.create(cleanData);
     }
 
     static async updateAppointment(id, appointmentData) {
-        return this.update(id, appointmentData);
+        // Update için tüm manual alanları gönder - PATCH için
+        // Computed fields gönderme: appointment_id, contact_name, contact_surname, contact_email, contact_phone, agent_name, agent_surname
+        const cleanData = {};
+
+        // Required fields - always include
+        if (appointmentData.appointment_address) {
+            cleanData.appointment_address = appointmentData.appointment_address.toString();
+        }
+
+        if (appointmentData.appointment_date) {
+            cleanData.appointment_date = new Date(appointmentData.appointment_date).toISOString();
+        }
+
+        // Contact - contact_id numeric field olarak gönder (Contact dökümanına göre)
+        if (appointmentData.contact_id) {
+            const contactId = typeof appointmentData.contact_id === 'string' ?
+                parseInt(appointmentData.contact_id) : appointmentData.contact_id;
+            cleanData.contact_id = contactId;
+        }
+
+        // Status - always include
+        if (typeof appointmentData.is_cancelled !== 'undefined') {
+            cleanData.is_cancelled = Boolean(appointmentData.is_cancelled);
+        }
+
+        // Agents - linked records array format (örneğe göre agent_id) - SADECE VALID ID'ler
+        if (appointmentData.agents && Array.isArray(appointmentData.agents)) {
+            const validAgents = appointmentData.agents
+                .filter(Boolean)
+                .filter(id => typeof id === 'string' && id.startsWith('rec') && id.length >= 17);
+            if (validAgents.length > 0) {
+                cleanData.agent_id = validAgents; // agent_id array format
+            } else {
+                cleanData.agent_id = []; // Empty array if no valid agents
+            }
+        } else {
+            cleanData.agent_id = []; // Empty array if no agents
+        }
+        return this.update(id, cleanData);
     }
 
     static async cancelAppointment(id) {

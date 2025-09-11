@@ -185,6 +185,14 @@ export default {
       return extra > 0 ? extra : 0;
     },
   },
+  watch: {
+    "filters.search": {
+      handler(newValue) {
+        this.performSearch(newValue);
+      },
+      immediate: false,
+    },
+  },
   methods: {
     agentKey(agent) {
       const code = (agent?.code || "").toString().trim().toUpperCase();
@@ -280,15 +288,36 @@ export default {
         ...this.filters,
         agents: this.selectedAgents.length > 0 ? this.selectedAgents : null,
       };
-      // eslint-disable-next-line no-console
-      console.log("[Header] emit filters:", filters);
       this.$emit("filters-change", filters);
     },
     debounceSearch() {
       if (this.searchTimeout) clearTimeout(this.searchTimeout);
       this.searchTimeout = setTimeout(() => {
-        this.emitFilters();
+        this.performSearch(this.filters.search);
       }, 300);
+    },
+    performSearch(searchTerm) {
+      // Arama case-insensitive olmalı ve şu alanlarda yapılmalı:
+      // - Adres (appointment_address)
+      // - Müşteri ismi (contact_name)
+      // - E-posta (contact_email)
+      // - Telefon numarası (contact_phone)
+
+      if (!searchTerm || searchTerm.trim() === "") {
+        // Boş arama durumunda tüm filtreleri temizle ve emit et
+        this.emitFilters();
+        return;
+      }
+
+      // Parent component'e sadece string olarak gönder
+      // Parent component bu string'i kendi alanlarında arayacak
+      const filters = {
+        ...this.filters,
+        search: searchTerm.trim(), // Sadece string gönder
+        agents: this.selectedAgents.length > 0 ? this.selectedAgents : null,
+      };
+
+      this.$emit("filters-change", filters);
     },
   },
   emits: ["filters-change"],

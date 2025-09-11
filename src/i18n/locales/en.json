@@ -3,6 +3,7 @@
     "appTitle": "Real Estate Appointment System",
     "loading": "Loading...",
     "save": "Save",
+    "update": "Update",
     "cancel": "Cancel",
     "close": "Close",
     "error": "Error",
@@ -18,10 +19,12 @@
     "fields": {
       "date": "Date and Time",
       "address": "Address",
+      "agents": "Agents",
       "contactName": "Name",
       "contactEmail": "Email",
       "contactPhone": "Phone",
-      "status": "Status"
+      "status": "Status",
+      "notes": "Notes"
     },
     "status": {
       "active": "Active",
@@ -32,12 +35,16 @@
     },
     "placeholders": {
       "address": "Appointment address",
+      "agent": "Select agents",
+      "searchContact": "Search customer...",
       "contactName": "Customer name",
       "contactEmail": "example@email.com",
       "contactPhone": "Phone number",
+      "date": "Appointment date",
       "dateFrom": "From",
       "dateTo": "To",
-      "search": "Search..."
+      "search": "Search...",
+      "notes": "Add a note (optional)"
     },
     "messages": {
       "createSuccess": "Appointment created successfully",
@@ -51,5 +58,11 @@
     "labels": {
       "otherAgents": "Other agents"
     }
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Please enter a valid email address",
+    "phone": "Please enter a valid phone number",
+    "contactRequired": "Please select a customer"
   }
 }

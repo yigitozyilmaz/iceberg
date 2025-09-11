@@ -17,6 +17,8 @@ import Dialog from 'primevue/dialog'
 import Calendar from 'primevue/calendar'
 import InputText from 'primevue/inputtext'
 import Dropdown from 'primevue/dropdown'
+import MultiSelect from 'primevue/multiselect'
+import AutoComplete from 'primevue/autocomplete'
 import Toast from 'primevue/toast'
 import Tag from 'primevue/tag'
 import Paginator from 'primevue/paginator'
@@ -49,6 +51,8 @@ app.component('Dialog', Dialog)
 app.component('Calendar', Calendar)
 app.component('InputText', InputText)
 app.component('Dropdown', Dropdown)
+app.component('MultiSelect', MultiSelect)
+app.component('AutoComplete', AutoComplete)
 app.component('Toast', Toast)
 app.component('Tag', Tag)
 app.component('Paginator', Paginator)

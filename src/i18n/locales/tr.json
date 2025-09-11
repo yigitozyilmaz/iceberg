@@ -3,6 +3,7 @@
     "appTitle": "Emlak Randevu Sistemi",
     "loading": "Yükleniyor...",
     "save": "Kaydet",
+    "update": "Güncelle",
     "cancel": "İptal",
     "close": "Kapat",
     "error": "Hata",
@@ -18,10 +19,12 @@
     "fields": {
       "date": "Tarih ve Saat",
       "address": "Adres",
+      "agents": "Ajanlar",
       "contactName": "İsim",
       "contactEmail": "Email",
       "contactPhone": "Telefon",
-      "status": "Durum"
+      "status": "Durum",
+      "notes": "Notlar"
     },
     "status": {
       "active": "Aktif",
@@ -32,12 +35,16 @@
     },
     "placeholders": {
       "address": "Randevu adresi",
+      "agent": "Ajan seçin",
+      "searchContact": "Müşteri ara...",
       "contactName": "Müşteri adı",
       "contactEmail": "ornek@email.com",
       "contactPhone": "Telefon numarası",
+      "date": "Randevu tarihi",
       "dateFrom": "Başlangıç",
       "dateTo": "Bitiş",
-      "search": "Ara..."
+      "search": "Ara...",
+      "notes": "Not ekleyin (opsiyonel)"
     },
     "messages": {
       "createSuccess": "Randevu başarıyla oluşturuldu",
@@ -51,5 +58,11 @@
     "labels": {
       "otherAgents": "Diğer ajanlar"
     }
+  },
+  "validation": {
+    "required": "Bu alan zorunludur",
+    "email": "Geçerli bir email adresi girin",
+    "phone": "Geçerli bir telefon numarası girin",
+    "contactRequired": "Bir müşteri seçin"
   }
 }

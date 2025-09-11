@@ -42,6 +42,7 @@
               :appointment="slotProps.data"
               :agent-color-by-code="agentColorByCode"
               :agent-color-by-name="agentColorByName"
+              @edit="handleEdit"
             />
           </template>
         </Column>
@@ -76,18 +77,21 @@ export default {
       type: Boolean,
       default: false,
     },
+    agents: {
+      type: Array,
+      default: () => [],
+    },
   },
   data() {
     return {
       filteredAppointments: [],
       currentFilters: {},
       rows: 10,
-      allAgents: [],
     };
   },
   computed: {
     agentsForHeader() {
-      return (this.allAgents || []).map((a) => ({
+      return (this.agents || []).map((a) => ({
         key: (a.code || "").toString().trim().toUpperCase() || null,
         code: a.code || null,
         name: a.agent_name || a.name || null,
@@ -97,7 +101,7 @@ export default {
     },
     agentColorByCode() {
       const map = {};
-      for (const a of this.allAgents || []) {
+      for (const a of this.agents || []) {
         const code = (a.code || "").toString().trim().toUpperCase();
         if (code) map[code] = a.color || null;
       }
@@ -105,7 +109,7 @@ export default {
     },
     agentColorByName() {
       const map = {};
-      for (const a of this.allAgents || []) {
+      for (const a of this.agents || []) {
         const f = (a.agent_name || a.name || "").toString().trim();
         const l = (a.agent_surname || a.surname || "").toString().trim();
         const full = `${f} ${l}`.trim().toLowerCase();
@@ -124,16 +128,6 @@ export default {
     },
   },
   methods: {
-    async loadAgents() {
-      try {
-        const response = await AgentService.getAgents();
-        this.allAgents = response.data || [];
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error("Failed to load agents", error);
-        this.allAgents = [];
-      }
-    },
     normalizeAgentKey(agent) {
       const code = (agent?.code || "").toString().trim().toUpperCase();
       if (code) return code;
@@ -149,6 +143,9 @@ export default {
     },
     onPageChange(event) {
       this.rows = event.rows;
+    },
+    handleEdit(appointment) {
+      this.$emit("edit-appointment", appointment);
     },
     onFiltersChange(filters) {
       this.currentFilters = filters;
@@ -226,13 +223,34 @@ export default {
       // Search filter
       if (this.currentFilters.search) {
         const searchLower = this.currentFilters.search.toLowerCase();
-        filtered = filtered.filter(
-          (appointment) =>
-            appointment.contact_name?.toLowerCase().includes(searchLower) ||
-            appointment.contact_email?.toLowerCase().includes(searchLower) ||
-            appointment.contact_phone?.toLowerCase().includes(searchLower) ||
-            appointment.appointment_address?.toLowerCase().includes(searchLower)
-        );
+        filtered = filtered.filter((appointment) => {
+          // Güvenli string dönüşümü için helper fonksiyon
+          const safeToString = (value) => {
+            if (!value) return "";
+            if (Array.isArray(value)) return value.join(" ");
+            return value.toString();
+          };
+
+          const contactName = safeToString(
+            appointment.contact_name
+          ).toLowerCase();
+          const contactEmail = safeToString(
+            appointment.contact_email
+          ).toLowerCase();
+          const contactPhone = safeToString(
+            appointment.contact_phone
+          ).toLowerCase();
+          const address = safeToString(
+            appointment.appointment_address
+          ).toLowerCase();
+
+          return (
+            contactName.includes(searchLower) ||
+            contactEmail.includes(searchLower) ||
+            contactPhone.includes(searchLower) ||
+            address.includes(searchLower)
+          );
+        });
       }
 
       // Agent filter (AND logic: appointment must include all selected agents)
@@ -277,10 +295,10 @@ export default {
       return keys;
     },
   },
-  emits: ["new-appointment"],
-  mounted() {
-    this.loadAgents();
-  },
+  emits: ["new-appointment", "edit-appointment"],
+  // mounted() {
+  //   this.loadAgents(); // App.vue'da yükleniyor artık
+  // },
 };
 </script>
 

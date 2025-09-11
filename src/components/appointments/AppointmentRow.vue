@@ -1,6 +1,7 @@
 <template>
   <div
-    class="py-3 flex items-center justify-evenly w-full overflow-hidden px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12"
+    class="py-3 flex items-center justify-evenly w-full overflow-hidden px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12 cursor-pointer hover:bg-gray-50 transition-colors"
+    @click="handleRowClick"
   >
     <!-- 1) Name / Email / Phone -->
     <div class="flex flex-col gap-1 min-w-[220px] basis-1/4 min-w-0">
@@ -229,6 +230,9 @@ export default {
     },
   },
   methods: {
+    handleRowClick() {
+      this.$emit("edit", this.appointment);
+    },
     formatArrayLike(value) {
       if (value === null || value === undefined) return "unknown";
       if (Array.isArray(value)) {
@@ -427,16 +431,12 @@ export default {
       return f || l ? `${f} ${l}`.trim() : code || "Agent";
     },
   },
+  emits: ["edit"],
   watch: {
     appointment: {
       immediate: true,
       handler() {
-        // eslint-disable-next-line no-console
-        console.log(
-          "[Row] agents for",
-          this.appointment?.id,
-          this.computedAgents
-        );
+        // Appointment değişikliklerini handle et
       },
     },
   },

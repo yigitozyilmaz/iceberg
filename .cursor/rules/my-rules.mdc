@@ -73,7 +73,7 @@ export default {
 
 ## PrimeVue Kullanımı
 
-- PrimeVue v4 componentleri için Tailwind teması kullanılacak
+- PrimeVue v3 componentleri için Tailwind teması kullanılacak
 - Component importları lazy loading ile yapılacak
 - PrimeVue componentleri için özel temalar tailwind.config.js içinde tanımlanacak
 
