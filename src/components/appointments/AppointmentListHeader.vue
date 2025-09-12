@@ -1,9 +1,30 @@
 <template>
   <div class="px-6 py-4">
+    <!-- Mobile/Tablet Filter Toggle Button -->
+    <div class="lg:hidden mb-4">
+      <button
+        @click="toggleMobileFilters"
+        class="flex items-center justify-between w-full p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+      >
+        <span class="font-medium text-gray-700">Filters</span>
+        <i
+          :class="[
+            'pi transition-transform duration-200',
+            mobileFiltersOpen ? 'pi-chevron-up' : 'pi-chevron-down',
+          ]"
+        ></i>
+      </button>
+    </div>
+
     <!-- Filters Row -->
     <div class="flex items-center justify-between mb-4">
       <!-- Left Side: Agent Filters and Other Filters -->
-      <div class="flex items-center gap-4">
+      <div
+        :class="[
+          'flex items-center gap-4 mobile-filters-container',
+          { show: mobileFiltersOpen },
+        ]"
+      >
         <!-- Agent Filters -->
         <div class="flex -space-x-2" style="height: 2.5rem">
           <!-- Loading Spinner when no agents -->
@@ -121,10 +142,26 @@
             @date-select="emitFilters"
           />
         </div>
+
+        <!-- Search - Mobile/Tablet -->
+        <div class="lg:hidden relative">
+          <span class="p-input-icon-right">
+            <i
+              class="pi pi-search absolute top-1/2 -translate-y-1/2 text-sm border-2 border-secondary rounded-r-md right-0 custom-search-icon"
+              style="padding: 0.6rem"
+            />
+            <InputText
+              v-model="filters.search"
+              :placeholder="$t('appointments.placeholders.search')"
+              class="w-full pl-3 pr-8 py-2 text-base border-2 border-primary rounded-md custom-search text-center"
+              @input="debounceSearch"
+            />
+          </span>
+        </div>
       </div>
 
-      <!-- Right Side: Search -->
-      <div class="relative">
+      <!-- Right Side: Search - Desktop -->
+      <div class="hidden lg:block relative">
         <span class="p-input-icon-right">
           <i
             class="pi pi-search absolute top-1/2 -translate-y-1/2 text-sm border-2 border-secondary rounded-r-md right-0 custom-search-icon"
@@ -141,7 +178,7 @@
     </div>
 
     <!-- Divider -->
-    <div class="border-b border-gray-200 mt-4"></div>
+    <div class="border-b-4 border-gray-200 mt-4"></div>
   </div>
 </template>
 
@@ -164,6 +201,7 @@ export default {
       },
       selectedAgents: [],
       overflowOpen: false,
+      mobileFiltersOpen: false,
       statusOptions: [
         { label: this.$t("appointments.status.all"), value: null },
         { label: this.$t("appointments.status.upcoming"), value: "upcoming" },
@@ -310,6 +348,9 @@ export default {
       };
 
       this.$emit("filters-change", filters);
+    },
+    toggleMobileFilters() {
+      this.mobileFiltersOpen = !this.mobileFiltersOpen;
     },
   },
   emits: ["filters-change"],

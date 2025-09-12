@@ -14,18 +14,30 @@
   --p-primary-contrast-color: #ffffff;
 }
 html {
-  font-size: 10px; /* Mobile */
+  font-size: 10px; /* Mobile - very small */
+}
+
+@media (min-width: 480px) {
+  html {
+    font-size: 12px; /* Small mobile */
+  }
 }
 
 @media (min-width: 640px) {
   html {
-    font-size: 12px; /* Small screens */
+    font-size: 12px; /* Large mobile / Small tablet */
   }
 }
 
 @media (min-width: 768px) {
   html {
-    font-size: 14px; /* Medium screens and up */
+    font-size: 14px; /* Tablet */
+  }
+}
+
+@media (min-width: 1024px) {
+  html {
+    font-size: 15px; /* Small laptop */
   }
 }
 @media (min-width: 1080px) and (max-width: 1500px) {
@@ -46,8 +58,361 @@ html {
   }
 }
 
-/* Responsive modal sizes based on viewport */
-@media (max-width: 1500px) {
+/* Mobile Responsive Styles */
+@media (max-width: 767px) {
+  /* Mobile Modal */
+  .appointment-modal .p-dialog {
+    width: 95vw !important;
+    max-width: 95vw !important;
+    margin: 0.5rem !important;
+    height: 90vh !important;
+  }
+
+  .modal-form-content {
+    gap: 0.75rem !important;
+    padding: 0.5rem !important;
+  }
+
+  .custom-input {
+    padding: 0.5rem !important;
+    font-size: 1.4rem !important;
+  }
+
+  .p-button {
+    padding: 0.75rem 1rem !important;
+    font-size: 1.2rem !important;
+  }
+
+  /* Mobile DataTable */
+  .p-datatable .p-datatable-thead > tr > th {
+    border-bottom: 2px solid #e5e7eb !important;
+  }
+
+  .p-datatable .p-datatable-tbody > tr > td {
+    padding: 0.5rem !important;
+  }
+
+  .p-datatable .p-datatable-tbody > tr {
+    border-bottom: 1px solid #e5e7eb !important;
+  }
+
+  .p-datatable .p-datatable-tbody > tr:last-child {
+    border-bottom: none !important;
+  }
+
+  /* Mobile Pagination */
+  .p-paginator {
+    padding: 0.5rem !important;
+    font-size: 1.2rem !important;
+  }
+
+  .p-paginator .p-paginator-pages .p-paginator-page {
+    min-width: 2rem !important;
+    height: 2rem !important;
+    font-size: 1.2rem !important;
+  }
+
+  /* Mobile Header */
+  .px-6 {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    position: relative !important;
+  }
+
+  /* Mobile Create Button */
+  .bg-secondary {
+    width: 100% !important;
+    justify-content: center !important;
+    margin-top: 0.5rem !important;
+  }
+
+  /* Mobile Agent Filters */
+  .flex.-space-x-2 {
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+  }
+
+  .flex.-space-x-2 > div {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Mobile Search */
+  .flex.items-center.gap-4 {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 1rem !important;
+  }
+
+  /* Mobile Search Input */
+  .p-inputtext {
+    width: 100% !important;
+    font-size: 1.4rem !important;
+    padding: 0.75rem !important;
+  }
+
+  /* Mobile Filters Accordion */
+  .mobile-filters-container {
+    display: none !important;
+  }
+
+  .mobile-filters-container.show {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1rem !important;
+    margin-bottom: 1rem !important;
+    width: 100% !important;
+    position: relative !important;
+    background: white !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 0.5rem !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+    padding: 1rem !important;
+  }
+
+  /* Mobile Agent Filters */
+  .mobile-filters-container .flex.-space-x-2 {
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+    justify-content: center !important;
+  }
+
+  .mobile-filters-container .flex.-space-x-2 > div {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Mobile Status and Date Filters */
+  .mobile-filters-container .custom-dropdown {
+    width: 100% !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  /* Mobile Calendar Inputs */
+  .mobile-filters-container .p-calendar {
+    width: 100% !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .mobile-filters-container .p-calendar .p-inputtext {
+    width: 100% !important;
+  }
+
+  /* Mobile Search in Accordion */
+  .mobile-filters-container .p-inputtext {
+    width: 100% !important;
+    font-size: 1.4rem !important;
+    padding: 0.75rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  /* Mobile Search Icon - Remove Border */
+  .mobile-filters-container .custom-search-icon {
+    border: none !important;
+    background: transparent !important;
+  }
+
+  /* Mobile Appointment Row */
+  .py-3.flex.items-center {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 1rem !important;
+    padding: 1rem !important;
+  }
+
+  .py-3.flex.items-center > div {
+    min-width: auto !important;
+    flex-basis: auto !important;
+  }
+
+  /* Mobile Contact Info */
+  .flex.flex-col.gap-1 {
+    order: 1 !important;
+  }
+
+  /* Mobile Address */
+  .flex.items-start.gap-2 {
+    order: 2 !important;
+  }
+
+  /* Mobile Status */
+  .flex.items-center.justify-start {
+    order: 3 !important;
+    justify-content: center !important;
+  }
+
+  /* Mobile Agents */
+  .flex.items-center.gap-2 {
+    order: 4 !important;
+    justify-content: center !important;
+  }
+
+  /* Mobile Time */
+  .flex.items-center.justify-end {
+    order: 5 !important;
+    justify-content: center !important;
+  }
+
+  /* Mobile Status Pill */
+  .h-10.rounded-full {
+    height: auto !important;
+    padding: 0.5rem !important;
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .h-10.rounded-full > div {
+    width: auto !important;
+    min-width: 120px !important;
+  }
+}
+
+/* Tablet/iPad Responsive Styles */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .appointment-modal .p-dialog {
+    width: 80vw !important;
+    max-width: 80vw !important;
+    margin: 1rem !important;
+  }
+
+  .modal-form-content {
+    gap: 1rem !important;
+    padding: 1rem !important;
+  }
+
+  .custom-input {
+    padding: 0.6rem !important;
+    font-size: 1.2rem !important;
+  }
+
+  .p-button {
+    padding: 0.6rem 1.2rem !important;
+    font-size: 1.1rem !important;
+  }
+
+  /* Tablet Appointment Row */
+  .py-3.flex.items-center {
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+  }
+
+  .py-3.flex.items-center > div {
+    min-width: 180px !important;
+  }
+
+  /* Tablet Agent Filters */
+  .flex.-space-x-2 {
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+    justify-content: center !important;
+  }
+
+  .flex.-space-x-2 > div {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Tablet Search */
+  .flex.items-center.gap-4 {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 1rem !important;
+  }
+
+  /* Tablet Search Input */
+  .p-inputtext {
+    width: 100% !important;
+    font-size: 1.2rem !important;
+    padding: 0.6rem !important;
+  }
+
+  /* Tablet Header */
+  .px-6 {
+    position: relative !important;
+  }
+
+  /* Tablet Filters Accordion */
+  .mobile-filters-container {
+    display: none !important;
+  }
+
+  .mobile-filters-container.show {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1rem !important;
+    margin-bottom: 1rem !important;
+    width: 100% !important;
+    position: relative !important;
+    background: white !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 0.5rem !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+    padding: 1rem !important;
+  }
+
+  /* Tablet Agent Filters */
+  .mobile-filters-container .flex.-space-x-2 {
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+    justify-content: center !important;
+  }
+
+  .mobile-filters-container .flex.-space-x-2 > div {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Tablet Status and Date Filters */
+  .mobile-filters-container .custom-dropdown {
+    width: 100% !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  /* Tablet Calendar Inputs */
+  .mobile-filters-container .p-calendar {
+    width: 100% !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .mobile-filters-container .p-calendar .p-inputtext {
+    width: 100% !important;
+  }
+
+  /* Tablet Search in Accordion */
+  .mobile-filters-container .p-inputtext {
+    width: 100% !important;
+    font-size: 1.2rem !important;
+    padding: 0.6rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  /* Tablet Filter Layout - Force Vertical */
+  .mobile-filters-container .flex.items-center.gap-4 {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 1rem !important;
+  }
+
+  /* Tablet Search Icon - Remove Border */
+  .mobile-filters-container .custom-search-icon {
+    border: none !important;
+    background: transparent !important;
+  }
+
+  /* Tablet DataTable */
+  .p-datatable .p-datatable-thead > tr > th {
+    border-bottom: 2px solid #e5e7eb !important;
+  }
+}
+
+/* Desktop DataTable Header Divider */
+.p-datatable .p-datatable-thead > tr > th {
+  border-bottom: 2px solid #e5e7eb !important;
+}
+
+/* Laptop Responsive Styles */
+@media (min-width: 1024px) and (max-width: 1500px) {
   .appointment-modal .p-dialog {
     width: 26rem !important;
     max-width: 90vw !important;

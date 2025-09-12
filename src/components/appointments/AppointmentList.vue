@@ -20,6 +20,9 @@
       />
     </div>
 
+    <!-- Divider after Create Button -->
+    <div class="border-b border-primary mx-6"></div>
+
     <!-- Loading State -->
     <div v-if="loading" class="flex justify-center items-center py-8">
       <i class="pi pi-spin pi-spinner text-4xl text-gray-400"></i>
