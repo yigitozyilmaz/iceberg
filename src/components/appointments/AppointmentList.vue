@@ -307,7 +307,7 @@ export default {
 <style scoped>
 /* Hide table header */
 :deep(.p-datatable-thead) {
-  display: none !important;
+  display: none;
 }
 /* Add vertical spacing between table rows and remove default collapse */
 :deep(.p-datatable-table) {
@@ -316,7 +316,7 @@ export default {
 }
 /* Remove default td padding so our cell looks like a card */
 :deep(.p-datatable-tbody > tr > td.app-row-cell) {
-  padding: 0 !important;
+  padding: 0;
   background: transparent;
 }
 /* Card styling on the single cell */
@@ -334,17 +334,17 @@ export default {
 }
 /* DataTable Paginator Rows Per Page Dropdown */
 :deep(.p-paginator .p-paginator-rpp-options .p-dropdown) {
-  border: 1px solid var(--color-primary) !important;
+  border: 1px solid var(--color-primary);
   border-radius: 0.375rem;
 }
 
 :deep(.p-paginator .p-dropdown) {
-  border: 1px solid var(--color-primary) !important;
+  border: 1px solid var(--color-primary);
   border-radius: 0.375rem;
 }
 
 :deep(.p-datatable .p-paginator .p-dropdown) {
-  border: 1px solid var(--color-primary) !important;
+  border: 1px solid var(--color-primary);
   border-radius: 0.375rem;
 }
 </style>

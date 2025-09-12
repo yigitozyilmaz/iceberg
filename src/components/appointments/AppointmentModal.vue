@@ -200,6 +200,10 @@
             optionValue="value"
             :placeholder="$t('appointments.fields.status')"
             class="w-full custom-dropdown"
+            :style="{
+              border: '2px solid var(--color-primary)',
+              borderRadius: '0.5rem',
+            }"
           />
         </div>
       </div>
@@ -1041,16 +1045,15 @@ export default {
 /* Modal genel stilleri */
 :deep(.appointment-modal .p-dialog-header) {
   color: white;
-
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Modal header content ortala */
 :deep(.appointment-modal .p-dialog-header-content) {
-  width: 100% !important;
-  text-align: center !important;
+  width: 100%;
+  text-align: center;
 }
 
 /* Modal content wrapper - flex layout */
@@ -1124,7 +1127,7 @@ export default {
 :deep(.custom-calendar .p-inputtext) {
   border: none;
   padding: 0.5rem 0.75rem 0.5rem 0.75rem;
-  padding-right: 4rem !important; /* Space for manual icon */
+  padding-right: 4rem; /* Space for manual icon */
   font-size: 0.95rem;
   flex: 1;
   background: transparent;
@@ -1137,29 +1140,29 @@ export default {
 
 /* Force calendar icon to be visible */
 :deep(.custom-calendar .p-datepicker-trigger) {
-  display: none !important; /* Hide the original trigger */
+  display: none; /* Hide the original trigger */
 }
 
 /* Manual calendar icon styling - No background */
 .custom-calendar .absolute {
-  width: 3rem !important;
-  min-height: 2.5rem !important;
-  cursor: pointer !important;
-  transition: all 0.2s ease !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+  width: 3rem;
+  min-height: 2.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .custom-calendar .absolute i {
-  font-size: 1.1rem !important;
-  font-weight: 600 !important;
-  display: block !important;
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: block;
 }
 
 /* Modal search align */
 ::deep(.modal-search-input.p-inputtext) {
-  text-align: center !important;
+  text-align: center;
 }
 
 /* Dropdown stilleri */
@@ -1211,7 +1214,7 @@ label {
 /* Responsive tasarım */
 @media (max-width: 768px) {
   :deep(.appointment-modal .p-dialog) {
-    width: 95vw !important;
+    width: 95vw;
     margin: 1rem;
   }
 
@@ -1235,19 +1238,19 @@ label {
 
 /* Cancel Button - Black Style */
 ::deep(.cancel-button) {
-  background-color: #1f2937 !important;
-  color: white !important;
-  border: 2px solid #1f2937 !important;
+  background-color: #1f2937;
+  color: white;
+  border: 2px solid #1f2937;
 }
 
 ::deep(.cancel-button:hover) {
-  background-color: #111827 !important;
-  border-color: #111827 !important;
-  color: white !important;
+  background-color: #111827;
+  border-color: #111827;
+  color: white;
 }
 
 ::deep(.cancel-button:focus) {
-  box-shadow: 0 0 0 3px rgba(31, 41, 55, 0.2) !important;
+  box-shadow: 0 0 0 3px rgba(31, 41, 55, 0.2);
 }
 
 /* AutoComplete Focus Styling */
@@ -1258,19 +1261,19 @@ label {
 }
 
 :deep(.p-autocomplete:focus-within) {
-  border: 2px solid var(--color-secondary) !important;
+  border: 2px solid var(--color-secondary);
 }
 
 :deep(.p-autocomplete .p-inputtext) {
-  border: none !important;
-  outline: none !important;
-  box-shadow: none !important;
+  border: none;
+  outline: none;
+  box-shadow: none;
 }
 
 :deep(.p-autocomplete .p-inputtext:focus) {
-  border: none !important;
-  outline: none !important;
-  box-shadow: none !important;
+  border: none;
+  outline: none;
+  box-shadow: none;
 }
 
 /* MultiSelect Focus Styling */
@@ -1281,78 +1284,77 @@ label {
 }
 
 :deep(.p-multiselect:focus-within) {
-  border: 2px solid var(--color-secondary) !important;
-  box-shadow: 0 0 0 3px rgba(var(--color-secondary-rgb), 0.1);
+  border: 2px solid var(--color-secondary);
+  box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
 }
 
 :deep(.p-multiselect .p-inputtext) {
-  border: none !important;
-  outline: none !important;
-  box-shadow: none !important;
+  border: none;
+  outline: none;
+  box-shadow: none;
 }
 
 :deep(.p-multiselect .p-inputtext:focus) {
-  border: none !important;
-  outline: none !important;
-  box-shadow: none !important;
+  border: none;
+  outline: none;
+  box-shadow: none;
 }
 
 /* MultiSelect Chip Styling */
 :deep(.p-multiselect .p-multiselect-token) {
-  background-color: var(--color-secondary) !important;
-  color: white !important;
-  border-radius: 0.375rem !important;
-  padding: 0.25rem 0.5rem !important;
-  margin: 0.125rem !important;
-  font-size: 0.875rem !important;
-  font-weight: 500 !important;
+  background-color: var(--color-secondary);
+  color: white;
+  border-radius: 0.375rem;
+  padding: 0.25rem 0.5rem;
+  margin: 0.125rem;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
 :deep(.p-multiselect .p-multiselect-token .p-multiselect-token-icon) {
-  color: white !important;
-  font-size: 0.75rem !important;
+  color: white;
+  font-size: 0.75rem;
 }
 
 :deep(.p-multiselect .p-multiselect-token:hover .p-multiselect-token-icon) {
-  color: #fecaca !important;
+  color: #fecaca;
 }
 
 /* Cancel Button - Black Style */
 :deep(.cancel-button) {
-  background-color: #000000 !important;
-  color: white !important;
-  border: 2px solid #000000 !important;
+  background-color: #000000;
+  color: white;
+  border: 2px solid #000000;
 }
 
 :deep(.cancel-button:hover) {
-  background-color: #333333 !important;
-  border-color: #333333 !important;
-  color: white !important;
+  background-color: #333333;
+  border-color: #333333;
+  color: white;
 }
 
 :deep(.cancel-button:focus) {
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2) !important;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2);
 }
 
 /* Save/Update Button - Secondary Style */
 :deep(.save-button.secondary) {
-  background-color: var(--color-secondary) !important;
-  color: white !important;
-  border: 2px solid var(--color-secondary) !important;
+  background-color: var(--color-secondary);
+  color: white;
+  border: 2px solid var(--color-secondary);
 }
 
 :deep(.save-button.secondary:hover:not(:disabled)) {
-  background-color: var(--color-secondary) !important;
-
+  background-color: var(--color-secondary);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
 :deep(.save-button.secondary:disabled) {
-  background: #d1d5db !important;
-  color: #9ca3af !important;
+  background: #d1d5db;
+  color: #9ca3af;
   cursor: not-allowed;
-  border: none !important;
+  border: none;
   transform: none;
   box-shadow: none;
 }

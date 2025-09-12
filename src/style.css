@@ -62,386 +62,386 @@ html {
 @media (max-width: 767px) {
   /* Mobile Modal */
   .appointment-modal .p-dialog {
-    width: 95vw !important;
-    max-width: 95vw !important;
-    margin: 0.5rem !important;
-    height: 90vh !important;
+    width: 95vw;
+    max-width: 95vw;
+    margin: 0.5rem;
+    height: 90vh;
   }
 
   .modal-form-content {
-    gap: 0.75rem !important;
-    padding: 0.5rem !important;
+    gap: 0.75rem;
+    padding: 0.5rem;
   }
 
   .custom-input {
-    padding: 0.5rem !important;
-    font-size: 1.4rem !important;
+    padding: 0.5rem;
+    font-size: 1.4rem;
   }
 
   .p-button {
-    padding: 0.75rem 1rem !important;
-    font-size: 1.2rem !important;
+    padding: 0.75rem 1rem;
+    font-size: 1.2rem;
   }
 
   /* Mobile DataTable */
   .p-datatable .p-datatable-thead > tr > th {
-    border-bottom: 2px solid #e5e7eb !important;
+    border-bottom: 2px solid #e5e7eb;
   }
 
   .p-datatable .p-datatable-tbody > tr > td {
-    padding: 0.5rem !important;
+    padding: 0.5rem;
   }
 
   .p-datatable .p-datatable-tbody > tr {
-    border-bottom: 1px solid #e5e7eb !important;
+    border-bottom: 1px solid #e5e7eb;
   }
 
   .p-datatable .p-datatable-tbody > tr:last-child {
-    border-bottom: none !important;
+    border-bottom: none;
   }
 
   /* Mobile Pagination */
   .p-paginator {
-    padding: 0.5rem !important;
-    font-size: 1.2rem !important;
+    padding: 0.5rem;
+    font-size: 1.2rem;
   }
 
   .p-paginator .p-paginator-pages .p-paginator-page {
-    min-width: 2rem !important;
-    height: 2rem !important;
-    font-size: 1.2rem !important;
+    min-width: 2rem;
+    height: 2rem;
+    font-size: 1.2rem;
   }
 
   /* Mobile Header */
   .px-6 {
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
-    position: relative !important;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    position: relative;
   }
 
   /* Mobile Create Button */
   .bg-secondary {
-    width: 100% !important;
-    justify-content: center !important;
-    margin-top: 0.5rem !important;
+    width: 100%;
+    justify-content: center;
+    margin-top: 0.5rem;
   }
 
   /* Mobile Agent Filters */
   .flex.-space-x-2 {
-    flex-wrap: wrap !important;
-    gap: 0.5rem !important;
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
 
   .flex.-space-x-2 > div {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
+    margin-left: 0;
+    margin-right: 0;
   }
 
   /* Mobile Search */
   .flex.items-center.gap-4 {
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 1rem !important;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
   }
 
   /* Mobile Search Input */
   .p-inputtext {
-    width: 100% !important;
-    font-size: 1.4rem !important;
-    padding: 0.75rem !important;
+    width: 100%;
+    font-size: 1.4rem;
+    padding: 0.75rem;
   }
 
   /* Mobile Filters Accordion */
   .mobile-filters-container {
-    display: none !important;
+    display: none;
   }
 
   .mobile-filters-container.show {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 1rem !important;
-    margin-bottom: 1rem !important;
-    width: 100% !important;
-    position: relative !important;
-    background: white !important;
-    border: 1px solid #e5e7eb !important;
-    border-radius: 0.5rem !important;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
-    padding: 1rem !important;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    width: 100%;
+    position: relative;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
   }
 
   /* Mobile Agent Filters */
   .mobile-filters-container .flex.-space-x-2 {
-    flex-wrap: wrap !important;
-    gap: 0.5rem !important;
-    justify-content: center !important;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
   }
 
   .mobile-filters-container .flex.-space-x-2 > div {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
+    margin-left: 0;
+    margin-right: 0;
   }
 
   /* Mobile Status and Date Filters */
   .mobile-filters-container .custom-dropdown {
-    width: 100% !important;
-    margin-bottom: 0.5rem !important;
+    width: 100%;
+    margin-bottom: 0.5rem;
   }
 
   /* Mobile Calendar Inputs */
   .mobile-filters-container .p-calendar {
-    width: 100% !important;
-    margin-bottom: 0.5rem !important;
+    width: 100%;
+    margin-bottom: 0.5rem;
   }
 
   .mobile-filters-container .p-calendar .p-inputtext {
-    width: 100% !important;
+    width: 100%;
   }
 
   /* Mobile Search in Accordion */
   .mobile-filters-container .p-inputtext {
-    width: 100% !important;
-    font-size: 1.4rem !important;
-    padding: 0.75rem !important;
-    margin-bottom: 0.5rem !important;
+    width: 100%;
+    font-size: 1.4rem;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
   }
 
   /* Mobile Search Icon - Remove Border */
   .mobile-filters-container .custom-search-icon {
-    border: none !important;
-    background: transparent !important;
+    border: none;
+    background: transparent;
   }
 
   /* Mobile Appointment Row */
   .py-3.flex.items-center {
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 1rem !important;
-    padding: 1rem !important;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    padding: 1rem;
   }
 
   .py-3.flex.items-center > div {
-    min-width: auto !important;
-    flex-basis: auto !important;
+    min-width: auto;
+    flex-basis: auto;
   }
 
   /* Mobile Contact Info */
   .flex.flex-col.gap-1 {
-    order: 1 !important;
+    order: 1;
   }
 
   /* Mobile Address */
   .flex.items-start.gap-2 {
-    order: 2 !important;
+    order: 2;
   }
 
   /* Mobile Status */
   .flex.items-center.justify-start {
-    order: 3 !important;
-    justify-content: center !important;
+    order: 3;
+    justify-content: center;
   }
 
   /* Mobile Agents */
   .flex.items-center.gap-2 {
-    order: 4 !important;
-    justify-content: center !important;
+    order: 4;
+    justify-content: center;
   }
 
   /* Mobile Time */
   .flex.items-center.justify-end {
-    order: 5 !important;
-    justify-content: center !important;
+    order: 5;
+    justify-content: center;
   }
 
   /* Mobile Status Pill */
   .h-10.rounded-full {
-    height: auto !important;
-    padding: 0.5rem !important;
-    width: 100% !important;
-    justify-content: center !important;
+    height: auto;
+    padding: 0.5rem;
+    width: 100%;
+    justify-content: center;
   }
 
   .h-10.rounded-full > div {
-    width: auto !important;
-    min-width: 120px !important;
+    width: auto;
+    min-width: 120px;
   }
 }
 
 /* Tablet/iPad Responsive Styles */
 @media (min-width: 768px) and (max-width: 1023px) {
   .appointment-modal .p-dialog {
-    width: 80vw !important;
-    max-width: 80vw !important;
-    margin: 1rem !important;
+    width: 80vw;
+    max-width: 80vw;
+    margin: 1rem;
   }
 
   .modal-form-content {
-    gap: 1rem !important;
-    padding: 1rem !important;
+    gap: 1rem;
+    padding: 1rem;
   }
 
   .custom-input {
-    padding: 0.6rem !important;
-    font-size: 1.2rem !important;
+    padding: 0.6rem;
+    font-size: 1.2rem;
   }
 
   .p-button {
-    padding: 0.6rem 1.2rem !important;
-    font-size: 1.1rem !important;
+    padding: 0.6rem 1.2rem;
+    font-size: 1.1rem;
   }
 
   /* Tablet Appointment Row */
   .py-3.flex.items-center {
-    flex-direction: row !important;
-    align-items: center !important;
-    gap: 0.5rem !important;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
   }
 
   .py-3.flex.items-center > div {
-    min-width: 180px !important;
+    min-width: 180px;
   }
 
   /* Tablet Agent Filters */
   .flex.-space-x-2 {
-    flex-wrap: wrap !important;
-    gap: 0.5rem !important;
-    justify-content: center !important;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
   }
 
   .flex.-space-x-2 > div {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
+    margin-left: 0;
+    margin-right: 0;
   }
 
   /* Tablet Search */
   .flex.items-center.gap-4 {
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 1rem !important;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
   }
 
   /* Tablet Search Input */
   .p-inputtext {
-    width: 100% !important;
-    font-size: 1.2rem !important;
-    padding: 0.6rem !important;
+    width: 100%;
+    font-size: 1.2rem;
+    padding: 0.6rem;
   }
 
   /* Tablet Header */
   .px-6 {
-    position: relative !important;
+    position: relative;
   }
 
   /* Tablet Filters Accordion */
   .mobile-filters-container {
-    display: none !important;
+    display: none;
   }
 
   .mobile-filters-container.show {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 1rem !important;
-    margin-bottom: 1rem !important;
-    width: 100% !important;
-    position: relative !important;
-    background: white !important;
-    border: 1px solid #e5e7eb !important;
-    border-radius: 0.5rem !important;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
-    padding: 1rem !important;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    width: 100%;
+    position: relative;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
   }
 
   /* Tablet Agent Filters */
   .mobile-filters-container .flex.-space-x-2 {
-    flex-wrap: wrap !important;
-    gap: 0.5rem !important;
-    justify-content: center !important;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
   }
 
   .mobile-filters-container .flex.-space-x-2 > div {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
+    margin-left: 0;
+    margin-right: 0;
   }
 
   /* Tablet Status and Date Filters */
   .mobile-filters-container .custom-dropdown {
-    width: 100% !important;
-    margin-bottom: 0.5rem !important;
+    width: 100%;
+    margin-bottom: 0.5rem;
   }
 
   /* Tablet Calendar Inputs */
   .mobile-filters-container .p-calendar {
-    width: 100% !important;
-    margin-bottom: 0.5rem !important;
+    width: 100%;
+    margin-bottom: 0.5rem;
   }
 
   .mobile-filters-container .p-calendar .p-inputtext {
-    width: 100% !important;
+    width: 100%;
   }
 
   /* Tablet Search in Accordion */
   .mobile-filters-container .p-inputtext {
-    width: 100% !important;
-    font-size: 1.2rem !important;
-    padding: 0.6rem !important;
-    margin-bottom: 0.5rem !important;
+    width: 100%;
+    font-size: 1.2rem;
+    padding: 0.6rem;
+    margin-bottom: 0.5rem;
   }
 
   /* Tablet Filter Layout - Force Vertical */
   .mobile-filters-container .flex.items-center.gap-4 {
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 1rem !important;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
   }
 
   /* Tablet Search Icon - Remove Border */
   .mobile-filters-container .custom-search-icon {
-    border: none !important;
-    background: transparent !important;
+    border: none;
+    background: transparent;
   }
 
   /* Tablet DataTable */
   .p-datatable .p-datatable-thead > tr > th {
-    border-bottom: 2px solid #e5e7eb !important;
+    border-bottom: 2px solid #e5e7eb;
   }
 }
 
 /* Desktop DataTable Header Divider */
 .p-datatable .p-datatable-thead > tr > th {
-  border-bottom: 2px solid #e5e7eb !important;
+  border-bottom: 2px solid #e5e7eb;
 }
 
 /* Laptop Responsive Styles */
 @media (min-width: 1024px) and (max-width: 1500px) {
   .appointment-modal .p-dialog {
-    width: 26rem !important;
-    max-width: 90vw !important;
+    width: 26rem;
+    max-width: 90vw;
   }
 
   .modal-form-content {
-    gap: 0.5rem !important;
-    padding: 0.75rem !important;
+    gap: 0.5rem;
+    padding: 0.75rem;
   }
 
   .custom-input {
-    padding: 0.4rem 0.6rem !important;
+    padding: 0.4rem 0.6rem;
   }
 
   .p-button {
-    padding: 0.5rem 1rem !important;
+    padding: 0.5rem 1rem;
   }
 }
 
 @media (min-width: 1501px) and (max-width: 1600px) {
   .appointment-modal .p-dialog {
-    width: 28rem !important;
-    max-width: 90vw !important;
+    width: 28rem;
+    max-width: 90vw;
   }
 }
 
 @media (min-width: 1601px) {
   .appointment-modal .p-dialog {
-    width: 32rem !important;
+    width: 32rem;
   }
 }
 
@@ -455,19 +455,19 @@ html {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
   border-radius: 0.375rem;
-  border: none !important;
-  outline: none !important;
-  box-shadow: none !important;
+  border: none;
+  outline: none;
+  box-shadow: none;
 }
 
 .p-calendar:focus-within {
-  border: 2px solid var(--color-secondary) !important;
+  border: 2px solid var(--color-secondary);
 }
 
 .p-calendar .p-inputtext:focus {
-  border: none !important;
-  outline: none !important;
-  box-shadow: none !important;
+  border: none;
+  outline: none;
+  box-shadow: none;
 }
 
 .calendar-input .p-inputtext::placeholder {
@@ -481,20 +481,20 @@ html {
 
 /* Global MultiSelect Styling - Method 4: Global CSS */
 .p-multiselect-panel {
-  background-color: var(--color-primary) !important;
-  color: black !important;
+  background-color: var(--color-primary);
+  color: black;
 }
 
 .p-multiselect-panel .p-multiselect-item {
-  background-color: transparent !important;
-  color: black !important;
+  background-color: transparent;
+  color: black;
 }
 
 .p-multiselect-panel .p-multiselect-item:hover {
-  background-color: white !important;
-  color: black !important;
+  background-color: white;
+  color: black;
 }
 /* MultiSelect Checkbox Styling */
 .p-multiselect-panel .p-checkbox .p-checkbox-box {
-  border: 1px solid var(--color-secondary) !important;
+  border: 1px solid var(--color-secondary);
 }

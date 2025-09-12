@@ -363,7 +363,7 @@ export default {
   border: 2px solid var(--color-primary);
 }
 .custom-dropdown:focus-within {
-  border: 2px solid var(--color-secondary) !important;
+  border: 2px solid var(--color-secondary);
 }
 :deep(.custom-dropdown .p-dropdown-label) {
   padding-top: 0.25rem;
@@ -380,8 +380,8 @@ export default {
   transition: all 0.2s ease;
 }
 :deep(.custom-search.p-inputtext:focus) {
-  border: 2px solid var(--color-secondary) !important;
-  outline: none !important;
+  border: 2px solid var(--color-secondary);
+  outline: none;
 }
 :deep(.custom-search.p-inputtext::placeholder) {
   color: black;
