@@ -52,7 +52,8 @@ export default {
     async loadAppointments() {
       try {
         this.loading = true;
-        const response = await AppointmentService.getAppointments();
+        // API'den tüm appointment listesini al (frontend'te sıralanacak)
+        const response = await AppointmentService.getAllAppointments();
         this.appointments = response.data;
       } catch (error) {
         this.$toast.add({

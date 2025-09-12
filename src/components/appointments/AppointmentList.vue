@@ -261,7 +261,7 @@ export default {
         });
       }
 
-      // Global sort by nearest date (upcoming earliest first)
+      // Frontend'te sıralama (upcoming earliest first)
       filtered = this.sortByNearestDate(filtered);
 
       this.filteredAppointments = filtered;

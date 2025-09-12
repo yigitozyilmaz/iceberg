@@ -39,9 +39,9 @@ export class BaseService {
         return new ErrorWrapper(error);
     }
 
-    static async get() {
+    static async get(params = {}) {
         try {
-            const response = await this.request.get(`/${this.entity}`);
+            const response = await this.request.get(`/${this.entity}`, { params });
             return this.responseWrapper(response);
         } catch (error) {
             throw this.errorWrapper(error);

@@ -5,8 +5,47 @@ export class AppointmentService extends BaseService {
         return 'appointments';
     }
 
-    static async getAppointments() {
-        return this.get();
+    static async getAllAppointments() {
+        try {
+            // Tüm appointment'ları pagination ile çek (sort yok)
+            let allRecords = [];
+            let offset = null;
+
+            do {
+                const params = {
+                    pageSize: 100 // Maximum per request
+                };
+
+                if (offset) {
+                    params.offset = offset;
+                }
+
+                const response = await this.request.get(`/${this.entity}`, { params });
+                const data = response.data;
+
+                if (data.records) {
+                    // BaseService responseWrapper formatına uygun şekilde process et
+                    const processedRecords = data.records.map(record => ({
+                        id: record.id,
+                        createdTime: record.createdTime,
+                        ...record.fields
+                    }));
+
+                    allRecords = allRecords.concat(processedRecords);
+                }
+
+                offset = data.offset; // Next page offset
+            } while (offset);
+
+            // ResponseWrapper format'ında döndür
+            return {
+                success: true,
+                data: allRecords,
+                status: 200
+            };
+        } catch (error) {
+            throw this.errorWrapper(error);
+        }
     }
 
     static async getAppointmentById(id) {
