@@ -57,7 +57,6 @@ import AppointmentRow from "./AppointmentRow.vue";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Button from "primevue/button";
-import { AgentService } from "../../api/services/agent.service";
 
 export default {
   components: {

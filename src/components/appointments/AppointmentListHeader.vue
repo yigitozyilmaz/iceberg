@@ -23,10 +23,9 @@
               :title="getAgentDisplayName(agent)"
               :class="[
                 'rounded-full flex items-center justify-center text-sm font-semibold border-2 border-white shadow-sm cursor-pointer select-none',
-                agentClassWithFallback(agent),
                 isSelected(agent) ? 'ring-2 ring-offset-1 ring-gray-700' : '',
               ]"
-              :style="agentStyle(agent)"
+              :style="agentHexStyle(agent)"
               style="width: 2.5rem; height: 2.5rem"
               @click="toggleAgent(agentKey(agent))"
             >
@@ -52,21 +51,30 @@
                 <div
                   v-for="(agent, i) in overflowAgents"
                   :key="agent.key || i"
-                  class="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-50 cursor-pointer"
+                  :class="[
+                    'flex items-center gap-2 px-2 py-1 rounded cursor-pointer',
+                    isSelected(agent) ? 'bg-gray-100' : 'hover:bg-gray-50',
+                  ]"
                   @click="toggleAgent(agentKey(agent))"
                 >
                   <div
                     :class="[
                       'rounded-full flex items-center justify-center text-xs font-semibold border border-white shadow-sm',
-                      agentClassWithFallback(agent),
                       isSelected(agent) ? 'ring-1 ring-gray-700' : '',
                     ]"
-                    :style="agentStyle(agent)"
+                    :style="agentHexStyle(agent)"
                     style="width: 1.5rem; height: 1.5rem"
                   >
                     {{ getAgentLabel(agent) }}
                   </div>
-                  <div class="truncate">{{ getAgentDisplayName(agent) }}</div>
+                  <div
+                    class="truncate"
+                    :class="
+                      isSelected(agent) ? 'text-secondary' : 'text-secondary/50'
+                    "
+                  >
+                    {{ getAgentDisplayName(agent) }}
+                  </div>
                 </div>
                 <div class="mt-2 flex justify-end">
                   <button
@@ -138,6 +146,7 @@
 </template>
 
 <script>
+import { useAgentsStore } from "../../store/agents";
 export default {
   name: "AppointmentListHeader",
   props: {
@@ -165,6 +174,9 @@ export default {
     };
   },
   computed: {
+    agentsStore() {
+      return useAgentsStore();
+    },
     computedAgents() {
       return (this.agents || []).map((a) => ({
         key: a.key || this.agentKey(a),
@@ -207,28 +219,8 @@ export default {
       }
       return null;
     },
-    agentClassWithFallback(agent) {
-      const colorToken = agent?.color || "gray";
-      const colors = {
-        yellow: "bg-yellow-300 text-yellow-900",
-        orange: "bg-orange-300 text-orange-900",
-        purple: "bg-purple-300 text-purple-900",
-        green: "bg-green-300 text-green-900",
-        blue: "bg-blue-300 text-blue-900",
-        pink: "bg-pink-300 text-pink-900",
-        gray: "bg-gray-300 text-gray-700",
-      };
-      return colors[colorToken] || colors.gray;
-    },
-    agentStyle(agent) {
-      const colorToken = agent?.color || null;
-      if (typeof colorToken === "string" && colorToken.startsWith("#")) {
-        return {
-          backgroundColor: colorToken,
-          color: this.contrastText(colorToken),
-        };
-      }
-      return null;
+    agentHexStyle(agent) {
+      return this.agentsStore.bgStyleFor(agent);
     },
     contrastText(hex) {
       try {

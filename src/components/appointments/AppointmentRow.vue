@@ -73,11 +73,8 @@
         <div
           v-for="(agent, index) in limitedAgents"
           :key="index"
-          :class="[
-            'rounded-full flex items-center justify-center text-sm font-semibold border-2 border-white shadow-sm',
-            agentClassWithFallback(agent),
-          ]"
-          :style="agentStyle(agent)"
+          class="rounded-full flex items-center justify-center text-sm font-semibold border-2 border-white shadow-sm"
+          :style="agentHexStyle(agent)"
           style="width: 2.5rem; height: 2.5rem"
           :title="getAgentDisplayName(agent)"
         >
@@ -103,6 +100,7 @@
 </template>
 
 <script>
+import { useAgentsStore } from "../../store/agents";
 export default {
   name: "AppointmentRow",
   props: {
@@ -127,6 +125,9 @@ export default {
     };
   },
   computed: {
+    agentsStore() {
+      return useAgentsStore();
+    },
     isUpcoming() {
       if (this.appointment?.is_cancelled) return false;
       const date = new Date(this.appointment?.appointment_date);
@@ -246,49 +247,8 @@ export default {
       const str = String(value);
       return str && str.trim() !== "" ? str : "unknown";
     },
-    agentClassWithFallback(agent) {
-      const code = (agent?.code || "").toString().trim().toUpperCase();
-      const fullName = `${(agent?.name || "").toString().trim()} ${(
-        agent?.surname || ""
-      )
-        .toString()
-        .trim()}`
-        .trim()
-        .toLowerCase();
-      const byCode = code ? this.agentColorByCode[code] : null;
-      const byName = fullName ? this.agentColorByName[fullName] : null;
-      const colorToken = byCode || byName || agent?.color || "gray";
-      const colors = {
-        yellow: "bg-yellow-300 text-yellow-900",
-        orange: "bg-orange-300 text-orange-900",
-        purple: "bg-purple-300 text-purple-900",
-        green: "bg-green-300 text-green-900",
-        blue: "bg-blue-300 text-blue-900",
-        pink: "bg-pink-300 text-pink-900",
-        gray: "bg-gray-300 text-gray-700",
-      };
-      if (colors[colorToken]) return colors[colorToken];
-      return colors.gray;
-    },
-    agentStyle(agent) {
-      const code = (agent?.code || "").toString().trim().toUpperCase();
-      const fullName = `${(agent?.name || "").toString().trim()} ${(
-        agent?.surname || ""
-      )
-        .toString()
-        .trim()}`
-        .trim()
-        .toLowerCase();
-      const byCode = code ? this.agentColorByCode[code] : null;
-      const byName = fullName ? this.agentColorByName[fullName] : null;
-      const colorToken = byCode || byName || agent?.color || null;
-      if (typeof colorToken === "string" && colorToken.startsWith("#")) {
-        return {
-          backgroundColor: colorToken,
-          color: this.contrastText(colorToken),
-        };
-      }
-      return null;
+    agentHexStyle(agent) {
+      return this.agentsStore.bgStyleFor(agent);
     },
     contrastText(hex) {
       try {
@@ -401,34 +361,10 @@ export default {
       }, 80);
     },
     getAgentInitials(agent) {
-      const firstName = Array.isArray(agent?.name)
-        ? agent.name[0]
-        : agent?.name;
-      const lastName = Array.isArray(agent?.surname)
-        ? agent.surname[0]
-        : agent?.surname;
-      const f = (firstName || "").toString().trim();
-      const l = (lastName || "").toString().trim();
-      if (f || l) {
-        const fi = f ? f[0] : "";
-        const li = l ? l[0] : "";
-        return (fi + li).toUpperCase() || "??";
-      }
-      const source = (agent?.code || "").toString().trim();
-      if (source) return source.slice(0, 2).toUpperCase();
-      return "??";
+      return this.agentsStore.initialsFor(agent);
     },
     getAgentDisplayName(agent) {
-      const firstName = Array.isArray(agent?.name)
-        ? agent.name[0]
-        : agent?.name;
-      const lastName = Array.isArray(agent?.surname)
-        ? agent.surname[0]
-        : agent?.surname;
-      const f = (firstName || "").toString().trim();
-      const l = (lastName || "").toString().trim();
-      const code = (agent?.code || "").toString().trim();
-      return f || l ? `${f} ${l}`.trim() : code || "Agent";
+      return this.agentsStore.displayNameFor(agent);
     },
   },
   emits: ["edit"],

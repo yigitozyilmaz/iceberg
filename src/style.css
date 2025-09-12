@@ -28,9 +28,55 @@ html {
     font-size: 14px; /* Medium screens and up */
   }
 }
-@media (min-width: 1080px) {
+@media (min-width: 1080px) and (max-width: 1500px) {
   html {
-    font-size: 16px; /* Medium screens and up */
+    font-size: 13px; /* 1080p with zoom (around 1878px) */
+  }
+}
+
+@media (min-width: 1501px) and (max-width: 1600px) {
+  html {
+    font-size: 14px; /* 1080p without zoom (around 1494px) */
+  }
+}
+
+@media (min-width: 1601px) {
+  html {
+    font-size: 16px; /* Large desktop */
+  }
+}
+
+/* Responsive modal sizes based on viewport */
+@media (max-width: 1500px) {
+  .appointment-modal .p-dialog {
+    width: 26rem !important;
+    max-width: 90vw !important;
+  }
+
+  .modal-form-content {
+    gap: 0.5rem !important;
+    padding: 0.75rem !important;
+  }
+
+  .custom-input {
+    padding: 0.4rem 0.6rem !important;
+  }
+
+  .p-button {
+    padding: 0.5rem 1rem !important;
+  }
+}
+
+@media (min-width: 1501px) and (max-width: 1600px) {
+  .appointment-modal .p-dialog {
+    width: 28rem !important;
+    max-width: 90vw !important;
+  }
+}
+
+@media (min-width: 1601px) {
+  .appointment-modal .p-dialog {
+    width: 32rem !important;
   }
 }
 
@@ -66,4 +112,24 @@ html {
   top: -10px;
   padding-left: 10px;
   color: black;
+}
+
+/* Global MultiSelect Styling - Method 4: Global CSS */
+.p-multiselect-panel {
+  background-color: var(--color-primary) !important;
+  color: black !important;
+}
+
+.p-multiselect-panel .p-multiselect-item {
+  background-color: transparent !important;
+  color: black !important;
+}
+
+.p-multiselect-panel .p-multiselect-item:hover {
+  background-color: white !important;
+  color: black !important;
+}
+/* MultiSelect Checkbox Styling */
+.p-multiselect-panel .p-checkbox .p-checkbox-box {
+  border: 1px solid var(--color-secondary) !important;
 }

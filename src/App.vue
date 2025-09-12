@@ -17,6 +17,8 @@
       :appointment="selectedAppointment"
       :loading="saving"
       :agents="agents"
+      :agent-color-by-code="agentsStore.colorByCode"
+      :agent-color-by-name="agentsStore.colorByName"
       @save="saveAppointment"
       @update:modelValue="onModalClose"
     />
@@ -27,6 +29,7 @@
 </template>
 
 <script>
+import { useAgentsStore } from "./store/agents";
 import AppointmentList from "./components/appointments/AppointmentList.vue";
 import AppointmentModal from "./components/appointments/AppointmentModal.vue";
 import { AppointmentService } from "./api/services/appointment.service";
@@ -70,6 +73,9 @@ export default {
       try {
         const response = await AgentService.getAgents();
         this.agents = response.data || [];
+        // sync to store
+        const store = useAgentsStore();
+        store.setAgents(this.agents);
       } catch (error) {
         this.agents = [];
       }
@@ -109,8 +115,8 @@ export default {
           });
         }
         await this.loadAppointments();
-        this.showModal = false;
         this.selectedAppointment = null;
+        this.showModal = false;
       } catch (error) {
         this.$toast.add({
           severity: "error",
@@ -121,6 +127,11 @@ export default {
       } finally {
         this.saving = false;
       }
+    },
+  },
+  computed: {
+    agentsStore() {
+      return useAgentsStore();
     },
   },
   async mounted() {

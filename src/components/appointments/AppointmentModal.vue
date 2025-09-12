@@ -27,11 +27,17 @@
               @item-select="onContactSelect"
               field="display"
               :placeholder="$t('appointments.placeholders.searchContact')"
-              class="w-full custom-input"
+              class="w-full custom-input modal-search-input pr-12 text-center"
               :class="{ 'p-invalid': errors.contact }"
               :loading="searchingContacts"
               forceSelection
             />
+            <!-- Right black search icon area -->
+            <div
+              class="absolute right-0 top-0 h-full w-10 bg-black text-white flex items-center justify-center rounded-r-md pointer-events-none"
+            >
+              <i class="pi pi-search text-sm"></i>
+            </div>
           </div>
 
           <!-- Selected Contact Card (Contact seçildiğinde göster) -->
@@ -49,15 +55,15 @@
               <i class="pi pi-user text-gray-600"></i>
               <div class="flex-1">
                 <div class="font-medium text-gray-900">
-                  {{ formData.contact_name }}
+                  {{ toDisplayString(formData.contact_name) }}
                 </div>
                 <div class="text-sm text-gray-600 flex items-center gap-1">
                   <i class="pi pi-envelope text-xs"></i>
-                  {{ formData.contact_email }}
+                  {{ toDisplayString(formData.contact_email) }}
                 </div>
                 <div class="text-sm text-gray-600 flex items-center gap-1">
                   <i class="pi pi-phone text-xs"></i>
-                  {{ formData.contact_phone }}
+                  {{ toDisplayString(formData.contact_phone) }}
                 </div>
               </div>
             </div>
@@ -70,13 +76,20 @@
         <!-- 2. Address -->
         <div class="space-y-1">
           <!-- Create Mode: Always show input -->
-          <InputText
-            v-if="!isEdit"
-            v-model="formData.appointment_address"
-            class="w-full custom-input"
-            :class="{ 'p-invalid': errors.appointment_address }"
-            :placeholder="$t('appointments.placeholders.address')"
-          />
+          <div v-if="!isEdit" class="relative">
+            <InputText
+              v-model="formData.appointment_address"
+              class="w-full custom-input pr-12"
+              :class="{ 'p-invalid': errors.appointment_address }"
+              :placeholder="$t('appointments.placeholders.address')"
+            />
+            <!-- Home icon -->
+            <div
+              class="absolute right-0 top-0 h-full w-10 flex items-center justify-center rounded-r-md pointer-events-none"
+            >
+              <i class="pi pi-home text-sm"></i>
+            </div>
+          </div>
 
           <!-- Edit Mode: Show card or input based on editing state -->
           <div v-else>
@@ -84,10 +97,16 @@
             <div v-if="editingAddress" class="relative">
               <InputText
                 v-model="formData.appointment_address"
-                class="w-full custom-input"
+                class="w-full custom-input pr-12"
                 :class="{ 'p-invalid': errors.appointment_address }"
                 :placeholder="$t('appointments.placeholders.address')"
               />
+              <!-- Home icon -->
+              <div
+                class="absolute right-0 top-0 h-full w-10 bg-gray-100 text-gray-600 flex items-center justify-center rounded-r-md pointer-events-none"
+              >
+                <i class="pi pi-home text-sm"></i>
+              </div>
             </div>
 
             <!-- Address Card (Address var ve edit modunda değilse göster) -->
@@ -112,13 +131,20 @@
             </div>
 
             <!-- Address Input (Address yoksa göster) -->
-            <InputText
-              v-else
-              v-model="formData.appointment_address"
-              class="w-full custom-input"
-              :class="{ 'p-invalid': errors.appointment_address }"
-              :placeholder="$t('appointments.placeholders.address')"
-            />
+            <div v-else class="relative">
+              <InputText
+                v-model="formData.appointment_address"
+                class="w-full custom-input pr-12"
+                :class="{ 'p-invalid': errors.appointment_address }"
+                :placeholder="$t('appointments.placeholders.address')"
+              />
+              <!-- Home icon -->
+              <div
+                class="absolute right-0 top-0 h-full w-10 bg-gray-100 text-gray-600 flex items-center justify-center rounded-r-md pointer-events-none"
+              >
+                <i class="pi pi-home text-sm"></i>
+              </div>
+            </div>
           </div>
 
           <small v-if="errors.appointment_address" class="p-error">{{
@@ -135,22 +161,31 @@
             optionValue="id"
             display="chip"
             :filter="true"
-            class="w-full custom-dropdown agent-multiselect"
+            class="w-full custom-dropdown agent-multiselect custom-multiselect"
             :placeholder="$t('appointments.placeholders.agent')"
           />
         </div>
 
         <!-- 4. Date and Time -->
         <div class="space-y-1">
-          <Calendar
-            v-model="formData.appointment_date"
-            showTime
-            dateFormat="dd/mm/yy"
-            :showIcon="true"
-            class="w-full custom-calendar"
-            :placeholder="$t('appointments.placeholders.date')"
-            :class="{ 'p-invalid': errors.appointment_date }"
-          />
+          <div class="relative">
+            <Calendar
+              v-model="formData.appointment_date"
+              showTime
+              dateFormat="dd/mm/yy"
+              :showIcon="true"
+              class="w-full custom-calendar"
+              :placeholder="$t('appointments.placeholders.date')"
+              :class="{ 'p-invalid': errors.appointment_date }"
+            />
+            <!-- Manual calendar icon as fallback -->
+            <div
+              class="absolute right-0 top-0 h-full w-12 text-gray-600 flex items-center justify-center rounded-r-md z-10 cursor-pointer hover:text-gray-800 transition-colors"
+              @click="openCalendar"
+            >
+              <i class="pi pi-calendar text-lg"></i>
+            </div>
+          </div>
           <small v-if="errors.appointment_date" class="p-error">{{
             errors.appointment_date
           }}</small>
@@ -166,6 +201,126 @@
             :placeholder="$t('appointments.fields.status')"
             class="w-full custom-dropdown"
           />
+        </div>
+      </div>
+
+      <!-- Related Appointments (only in edit) -->
+      <div class="px-4 pb-4" v-if="isEdit && hasSelectedContact">
+        <div class="text-sm text-gray-700 font-semibold mb-2">
+          Related Appointments:
+        </div>
+
+        <div
+          v-if="loadingRelated"
+          class="flex items-center gap-2 text-gray-500 text-sm"
+        >
+          <i class="pi pi-spin pi-spinner"></i>
+          Loading...
+        </div>
+
+        <div v-else>
+          <div
+            v-for="ra in visibleRelatedAppointments"
+            :key="ra.id"
+            class="border border-gray-200 rounded-xl px-3 py-2 flex items-center justify-between gap-3 mb-2 bg-white"
+          >
+            <!-- Left: address + pill stacked -->
+            <div class="flex items-start gap-2">
+              <div class="flex flex-col">
+                <div class="text-sm text-gray-900 font-medium">
+                  <i class="pi pi-home text-gray-600 mt-0.5"></i>
+                  {{ ra.appointment_address || "-" }}
+                </div>
+                <div class="mt-1">
+                  <div
+                    class="flex items-center gap-2 bg-pink-500 rounded-full px-2 py-1 w-fit"
+                  >
+                    <span
+                      class="text-xs rounded-full bg-white text-green-600 px-2 py-0.5 font-semibold"
+                      v-if="
+                        !ra.is_cancelled &&
+                        new Date(ra.appointment_date) <= new Date()
+                      "
+                    >
+                      Completed
+                    </span>
+                    <span
+                      class="text-xs rounded-full bg-white text-slate-700 px-2 py-0.5 font-semibold"
+                      v-else-if="
+                        !ra.is_cancelled &&
+                        new Date(ra.appointment_date) > new Date()
+                      "
+                    >
+                      Upcoming
+                    </span>
+                    <span
+                      class="text-xs rounded-full bg-white text-red-600 px-2 py-0.5 font-semibold"
+                      v-else
+                    >
+                      Cancelled
+                    </span>
+                    <span class="text-xs text-white flex items-center gap-1">
+                      <i class="pi pi-clock text-xs"></i>
+                      {{ formatDate(ra.appointment_date) }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: agents -->
+            <div class="flex items-center gap-2">
+              <template
+                v-for="(agent, index) in normalizeAgents(ra).slice(0, 2)"
+                :key="index"
+              >
+                <div
+                  class="rounded-full flex items-center justify-center text-xs font-semibold border-2 border-white shadow-sm"
+                  :style="agentStyle(agent)"
+                  style="width: 2rem; height: 2rem"
+                  :title="agentDisplayName(agent)"
+                >
+                  {{ agentInitialsFrom(agent) }}
+                </div>
+              </template>
+              <div
+                v-if="normalizeAgents(ra).length > 2"
+                class="w-8 h-8 rounded-full bg-gray-200 text-gray-700 text-xs flex items-center justify-center font-semibold cursor-default"
+                @mouseenter="
+                  openOverflowForAgents(normalizeAgents(ra).slice(2), $event)
+                "
+                @mouseleave="startClose"
+              >
+                +{{ normalizeAgents(ra).length - 2 }}
+              </div>
+            </div>
+          </div>
+
+          <div
+            v-if="!relatedAppointmentsSorted.length"
+            class="text-xs text-gray-500"
+          >
+            No related appointments found.
+          </div>
+
+          <div
+            v-if="relatedAppointmentsSorted.length > 3"
+            class="flex justify-center mt-2"
+          >
+            <button
+              type="button"
+              class="text-gray-600 text-sm flex items-center gap-1 hover:text-gray-800"
+              @click="showAllRelated = !showAllRelated"
+            >
+              <i
+                :class="[
+                  'pi',
+                  showAllRelated ? 'pi-chevron-up' : 'pi-chevron-down',
+                ]"
+              ></i>
+              <span>{{ showAllRelated ? "Show less" : "Show more" }}</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -210,6 +365,14 @@ export default {
       type: Array,
       default: () => [],
     },
+    agentColorByCode: {
+      type: Object,
+      default: () => ({}),
+    },
+    agentColorByName: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   emits: ["update:modelValue", "save"],
   data() {
@@ -223,11 +386,21 @@ export default {
       allContacts: [],
       contactsLoaded: false,
       editingAddress: false,
+      relatedAppointments: [],
+      loadingRelated: false,
+      showAllRelated: false,
+      tooltipEl: null,
+      _closeTimer: null,
     };
   },
   computed: {
     isEdit() {
       return !!this.appointment;
+    },
+    hasSelectedContact() {
+      const cid = this.formData?.contact_id;
+      if (Array.isArray(cid)) return cid.length > 0;
+      return !!cid;
     },
     isPastDate() {
       const d = new Date(this.formData.appointment_date);
@@ -273,6 +446,30 @@ export default {
         this.formData.appointment_address &&
         this.formData.contact_id
       );
+    },
+    relatedAppointmentsSorted() {
+      const now = new Date();
+      const valid = this.relatedAppointments.filter(
+        (a) => !isNaN(new Date(a.appointment_date).getTime())
+      );
+      const invalid = this.relatedAppointments.filter((a) =>
+        isNaN(new Date(a.appointment_date).getTime())
+      );
+      const future = valid
+        .filter((a) => new Date(a.appointment_date) >= now)
+        .sort(
+          (a, b) => new Date(a.appointment_date) - new Date(b.appointment_date)
+        );
+      const past = valid
+        .filter((a) => new Date(a.appointment_date) < now)
+        .sort(
+          (a, b) => new Date(b.appointment_date) - new Date(a.appointment_date)
+        );
+      return [...future, ...past, ...invalid];
+    },
+    visibleRelatedAppointments() {
+      if (this.showAllRelated) return this.relatedAppointmentsSorted;
+      return this.relatedAppointmentsSorted.slice(0, 3);
     },
   },
   watch: {
@@ -350,23 +547,220 @@ export default {
             : this.isPastDate
             ? "completed"
             : "upcoming";
+          // Load related appointments for selected contact when editing
+          if (this.isEdit && this.formData.contact_id) {
+            this.loadRelatedAppointments();
+          }
         } else {
           this.formData = this.getEmptyForm();
           this.statusValue = "upcoming";
+          this.relatedAppointments = [];
         }
         this.errors = {};
       },
     },
     modelValue(visible) {
       if (!visible) {
-        this.errors = {};
+        // Modal kapandığında tüm state'i temizle (programmatic close dahil)
+        this.clearAllStates();
       } else {
         // Modal açılırken contact'ları yükle
         this.loadAllContacts();
+        if (this.isEdit && this.formData.contact_id)
+          this.loadRelatedAppointments();
+      }
+    },
+    "formData.contact_id"(val) {
+      if (this.isEdit && val) {
+        this.loadRelatedAppointments();
+      } else {
+        this.relatedAppointments = [];
       }
     },
   },
   methods: {
+    normalizeAgents(appointment) {
+      // Same normalization as list
+      if (Array.isArray(appointment?.agents) && appointment.agents.length) {
+        return appointment.agents.map((a) => ({
+          name: a.name || null,
+          surname: a.surname || null,
+          code: a.code || null,
+          color: a.color || null,
+        }));
+      }
+      const names = Array.isArray(appointment?.agent_name)
+        ? appointment.agent_name
+        : appointment?.agent_name
+        ? [appointment.agent_name]
+        : [];
+      const surnames = Array.isArray(appointment?.agent_surname)
+        ? appointment.agent_surname
+        : appointment?.agent_surname
+        ? [appointment.agent_surname]
+        : [];
+      const len = Math.max(names.length, surnames.length);
+      const list = [];
+      for (let i = 0; i < len; i++) {
+        list.push({
+          name: names[i] || null,
+          surname: surnames[i] || null,
+          code: null,
+          color: null,
+        });
+      }
+      return list;
+    },
+    agentInitialsFrom(agent) {
+      const f = (agent?.name || "").toString().trim();
+      const l = (agent?.surname || "").toString().trim();
+      if (f || l) return `${f ? f[0] : ""}${l ? l[0] : ""}`.toUpperCase();
+      const code = (agent?.code || "").toString().trim();
+      return code ? code.slice(0, 2).toUpperCase() : "??";
+    },
+    agentDisplayName(agent) {
+      const f = (agent?.name || "").toString().trim();
+      const l = (agent?.surname || "").toString().trim();
+      const code = (agent?.code || "").toString().trim();
+      return f || l ? `${f} ${l}`.trim() : code || "Agent";
+    },
+    agentClass(agent) {
+      return "";
+    },
+    agentStyle(agent) {
+      const code = (agent?.code || "").toString().trim().toUpperCase();
+      const fullName = `${(agent?.name || "").toString().trim()} ${(
+        agent?.surname || ""
+      )
+        .toString()
+        .trim()}`
+        .trim()
+        .toLowerCase();
+      const token =
+        (code && this.agentColorByCode[code]) ||
+        (fullName && this.agentColorByName[fullName]) ||
+        agent?.color ||
+        null;
+      const hex = this.colorTokenToHex(token) || "#e5e7eb";
+      return { backgroundColor: hex, color: this.contrastText(hex) };
+    },
+    colorTokenToHex(token) {
+      if (!token) return null;
+      if (typeof token === "string" && token.startsWith("#")) return token;
+      const map = {
+        yellow: "#fde047",
+        orange: "#fb923c",
+        purple: "#c084fc",
+        green: "#86efac",
+        blue: "#93c5fd",
+        pink: "#f9a8d4",
+        gray: "#e5e7eb",
+      };
+      return map[token] || null;
+    },
+    contrastText(hex) {
+      try {
+        const clean = hex.replace("#", "");
+        const r = parseInt(clean.substring(0, 2), 16);
+        const g = parseInt(clean.substring(2, 4), 16);
+        const b = parseInt(clean.substring(4, 6), 16);
+        const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+        return luminance > 140 ? "#111827" : "#ffffff";
+      } catch (e) {
+        return "#111827";
+      }
+    },
+    openOverflowForAgents(agents, evt) {
+      if (this.tooltipEl) return;
+      const rect = evt.currentTarget.getBoundingClientRect();
+      const el = document.createElement("div");
+      el.className =
+        "fixed bg-white border border-gray-200 rounded-md shadow-lg p-2 text-xs text-gray-700 whitespace-nowrap z-[9999]";
+      el.style.left = `${rect.left + rect.width / 2}px`;
+      el.style.top = `${rect.bottom + 8}px`;
+      el.style.transform = "translateX(-50%)";
+      el.style.minWidth = "140px";
+
+      for (const agent of agents) {
+        const row = document.createElement("div");
+        row.className = "flex items-center gap-2 px-2 py-0.5 leading-5";
+        const avatar = document.createElement("div");
+        avatar.className =
+          "rounded-full flex items-center justify-center text-xs font-semibold border border-white shadow-sm";
+        avatar.style.width = "1.5rem";
+        avatar.style.height = "1.5rem";
+        const initials = this.agentInitialsFrom(agent);
+        const { className, style } = this._agentClassAndStyle(agent);
+        if (className) avatar.className += ` ${className}`;
+        if (style && style.backgroundColor) {
+          avatar.style.backgroundColor = style.backgroundColor;
+          avatar.style.color = style.color;
+        }
+        avatar.textContent = initials;
+        row.appendChild(avatar);
+        const label = document.createElement("span");
+        label.textContent = this.agentDisplayName(agent);
+        row.appendChild(label);
+        el.appendChild(row);
+      }
+
+      el.addEventListener("mouseenter", () => {
+        if (this._closeTimer) {
+          clearTimeout(this._closeTimer);
+          this._closeTimer = null;
+        }
+      });
+      el.addEventListener("mouseleave", () => this.startClose());
+
+      document.body.appendChild(el);
+      this.tooltipEl = el;
+    },
+    _agentClassAndStyle(agent) {
+      const code = (agent?.code || "").toString().trim().toUpperCase();
+      const fullName = `${(agent?.name || "").toString().trim()} ${(
+        agent?.surname || ""
+      )
+        .toString()
+        .trim()}`
+        .trim()
+        .toLowerCase();
+      const colorToken =
+        (code && this.agentColorByCode[code]) ||
+        (fullName && this.agentColorByName[fullName]) ||
+        agent?.color ||
+        null;
+      if (typeof colorToken === "string" && colorToken.startsWith("#")) {
+        return {
+          className: "",
+          style: {
+            backgroundColor: colorToken,
+            color: this.contrastText(colorToken),
+          },
+        };
+      }
+      const classNameMap = {
+        yellow: "bg-yellow-300 text-yellow-900",
+        orange: "bg-orange-300 text-orange-900",
+        purple: "bg-purple-300 text-purple-900",
+        green: "bg-green-300 text-green-900",
+        blue: "bg-blue-300 text-blue-900",
+        pink: "bg-pink-300 text-pink-900",
+        gray: "bg-gray-300 text-gray-700",
+      };
+      return {
+        className: classNameMap[colorToken] || classNameMap.gray,
+        style: null,
+      };
+    },
+    startClose() {
+      if (this._closeTimer) clearTimeout(this._closeTimer);
+      this._closeTimer = setTimeout(() => {
+        if (this.tooltipEl) {
+          document.body.removeChild(this.tooltipEl);
+          this.tooltipEl = null;
+        }
+      }, 80);
+    },
     getEmptyForm() {
       return {
         appointment_date: new Date(),
@@ -378,6 +772,113 @@ export default {
         is_cancelled: false,
         agents: [],
       };
+    },
+    toDisplayString(value) {
+      if (Array.isArray(value)) {
+        return value.filter(Boolean).join(", ");
+      }
+      return value || "";
+    },
+    formatDate(date) {
+      const d = new Date(date);
+      if (isNaN(d.getTime())) return "-";
+      const dd = String(d.getDate()).padStart(2, "0");
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const yyyy = d.getFullYear();
+      return `${dd}/${mm}/${yyyy}`;
+    },
+    normalizeAgentKey(agent) {
+      const code = (agent?.code || "").toString().trim().toUpperCase();
+      if (code) return code;
+      const f = (agent?.name || "").toString().trim();
+      const l = (agent?.surname || "").toString().trim();
+      const initials = `${f ? f[0] : ""}${l ? l[0] : ""}`.toUpperCase();
+      return initials || null;
+    },
+    appointmentAgentKeys(appointment) {
+      const keys = [];
+      if (Array.isArray(appointment?.agents)) {
+        for (const a of appointment.agents) {
+          const k = this.normalizeAgentKey(a);
+          if (k) keys.push(k);
+        }
+      }
+      const names = Array.isArray(appointment?.agent_name)
+        ? appointment.agent_name
+        : appointment?.agent_name
+        ? [appointment.agent_name]
+        : [];
+      const surnames = Array.isArray(appointment?.agent_surname)
+        ? appointment.agent_surname
+        : appointment?.agent_surname
+        ? [appointment.agent_surname]
+        : [];
+      const len = Math.max(names.length, surnames.length);
+      for (let i = 0; i < len; i++) {
+        const obj = { name: names[i] || null, surname: surnames[i] || null };
+        const k = this.normalizeAgentKey(obj);
+        if (k) keys.push(k);
+      }
+      return keys;
+    },
+    firstAgentInitials(appointment) {
+      const keys = this.appointmentAgentKeys(appointment);
+      return keys[0] || "—";
+    },
+    agentInitials(appointment) {
+      return this.appointmentAgentKeys(appointment);
+    },
+    agentNames(appointment) {
+      const names = Array.isArray(appointment?.agent_name)
+        ? appointment.agent_name
+        : appointment?.agent_name
+        ? [appointment.agent_name]
+        : [];
+      const surnames = Array.isArray(appointment?.agent_surname)
+        ? appointment.agent_surname
+        : appointment?.agent_surname
+        ? [appointment.agent_surname]
+        : [];
+      const result = [];
+      const len = Math.max(names.length, surnames.length);
+      for (let i = 0; i < len; i++) {
+        const name = (names[i] || "").toString().trim();
+        const surname = (surnames[i] || "").toString().trim();
+        const full = `${name} ${surname}`.trim();
+        if (full) result.push(full);
+      }
+      return result;
+    },
+    async loadRelatedAppointments() {
+      try {
+        this.loadingRelated = true;
+        const { AppointmentService } = await import(
+          "../../api/services/appointment.service"
+        );
+        const response = await AppointmentService.getAllAppointments();
+        const all = response.data || [];
+        const selectedContactIds = Array.isArray(this.formData.contact_id)
+          ? this.formData.contact_id
+          : this.formData.contact_id
+          ? [this.formData.contact_id]
+          : [];
+        const currentId = this.appointment?.id || null;
+
+        // contact_id alanı Airtable linked record olduğu için array olabilir
+        this.relatedAppointments = all.filter((a) => {
+          if (currentId && a.id === currentId) return false; // şu anki kaydı dahil etme
+          const cid = Array.isArray(a.contact_id)
+            ? a.contact_id
+            : a.contact_id
+            ? [a.contact_id]
+            : [];
+          return selectedContactIds.some((id) => cid.includes(id));
+        });
+      } catch (e) {
+        this.relatedAppointments = [];
+      } finally {
+        this.loadingRelated = false;
+      }
     },
     async loadAllContacts() {
       if (this.contactsLoaded) return;
@@ -444,6 +945,7 @@ export default {
         this.formData.contact_email = contact.email || "";
         this.formData.contact_phone = contact.phone || "";
         this.selectedContact = contact.display;
+        this.loadRelatedAppointments();
       }
     },
     clearContact() {
@@ -452,6 +954,7 @@ export default {
       this.formData.contact_email = "";
       this.formData.contact_phone = "";
       this.selectedContact = null;
+      this.relatedAppointments = [];
     },
     startEditingAddress() {
       this.editingAddress = true;
@@ -518,6 +1021,18 @@ export default {
       this.contactsLoaded = false;
       this.searchingContacts = false;
     },
+    openCalendar() {
+      // Calendar'ı programmatically açmak için input'a focus ver
+      this.$nextTick(() => {
+        const calendarInput = document.querySelector(
+          ".custom-calendar .p-inputtext"
+        );
+        if (calendarInput) {
+          calendarInput.focus();
+          calendarInput.click();
+        }
+      });
+    },
   },
 };
 </script>
@@ -569,6 +1084,7 @@ export default {
 :deep(.appointment-modal .p-dialog-content) {
   padding: 0;
   border-radius: 0 0 0.5rem 0.5rem;
+  background: var(--color-primary);
 }
 
 /* Form input stilleri */
@@ -590,11 +1106,14 @@ export default {
   border-color: #ef4444;
 }
 
-/* Calendar stilleri */
+/* Calendar stilleri - Updated for better icon visibility */
 :deep(.custom-calendar .p-calendar) {
   border: 2px solid var(--color-primary);
   border-radius: 0.5rem;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
 }
 
 :deep(.custom-calendar .p-calendar:focus-within) {
@@ -604,13 +1123,43 @@ export default {
 
 :deep(.custom-calendar .p-inputtext) {
   border: none;
-  padding: 0.5rem 0.75rem;
+  padding: 0.5rem 0.75rem 0.5rem 0.75rem;
+  padding-right: 4rem !important; /* Space for manual icon */
   font-size: 0.95rem;
+  flex: 1;
+  background: transparent;
 }
 
 :deep(.custom-calendar .p-inputtext:focus) {
   box-shadow: none;
   outline: none;
+}
+
+/* Force calendar icon to be visible */
+:deep(.custom-calendar .p-datepicker-trigger) {
+  display: none !important; /* Hide the original trigger */
+}
+
+/* Manual calendar icon styling - No background */
+.custom-calendar .absolute {
+  width: 3rem !important;
+  min-height: 2.5rem !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.custom-calendar .absolute i {
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  display: block !important;
+}
+
+/* Modal search align */
+::deep(.modal-search-input.p-inputtext) {
+  text-align: center !important;
 }
 
 /* Dropdown stilleri */
@@ -726,14 +1275,14 @@ label {
 
 /* MultiSelect Focus Styling */
 :deep(.p-multiselect) {
-  border: 1px solid var(--color-primary);
-  border-radius: 0.375rem;
-  transition: all 0.2s ease;
+  border: 2px solid var(--color-primary);
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
 }
 
 :deep(.p-multiselect:focus-within) {
   border: 2px solid var(--color-secondary) !important;
-  box-shadow: none !important;
+  box-shadow: 0 0 0 3px rgba(var(--color-secondary-rgb), 0.1);
 }
 
 :deep(.p-multiselect .p-inputtext) {

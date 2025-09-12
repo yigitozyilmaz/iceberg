@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import PrimeVue from 'primevue/config'
 import ToastService from 'primevue/toastservice'
 import { createI18n } from 'vue-i18n'
@@ -37,11 +38,14 @@ const i18n = createI18n({
 })
 
 const app = createApp(App)
+const pinia = createPinia()
 
 // Use plugins
 app.use(PrimeVue, { ripple: true })
 app.use(ToastService)
 app.use(i18n)
+app.use(pinia)
+
 
 // Register PrimeVue components
 app.component('DataTable', DataTable)
