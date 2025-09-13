@@ -16,41 +16,29 @@ Bu proje, emlakçı çalışanlarının sistemlerinde kayıtlı olan kişilere e
 - PrimeVue
 - Tailwind CSS
 - Airtable API
+## Live
+https://iceberg-iota.vercel.app
 
-## Kurulum
+## Projenin açıklaması
+Randevular, sayfa açıldığında tablo üzerinden görüntülenmektedir. Tüm randevu verileri tablo yüklenmeden önce API’den çekilir ve önyüzde sayfalama (pagination) uygulanır. Tablo satır sayısı kullanıcı tarafından seçilebilir (varsayılan: 10). Sayfa açılmadan önce ayrıca Agent ve Contact verileri de yüklenmektedir. Agent’ların renk ve baş harf eşleştirmeleri store üzerinden yönetilmektedir.
 
-1. Repoyu klonlayın:
-\`\`\`bash
-git clone https://github.com/YOUR_USERNAME/iceberg.git
-cd iceberg
-\`\`\`
+Tablonun filtreleme bölümünde; randevular, atanan agentlara, statü durumuna, tarih aralığına veya contact bilgisine göre aranabilir ve listelenebilir.
 
-2. Bağımlılıkları yükleyin:
-\`\`\`bash
-yarn install
-\`\`\`
+Yeni randevu oluşturmak için Create Appointment butonuna basılır. Bu aşamada bir contact seçilir, adres girilir, ardından agent seçimi ve randevu zamanı belirlenerek kayıt tamamlanır.
 
-3. .env dosyasını oluşturun:
-\`\`\`env
-VITE_AIRTABLE_API_URL=your_airtable_api_url
-VITE_AIRTABLE_API_KEY=your_airtable_api_key
-\`\`\`
+Düzenleme için, tablodan ilgili randevu seçilir ve istenilen alanlarda değişiklik yapılabilir. Edit ekranında ayrıca müşteriye ait ilgili randevular (related appointments) listelenmektedir.
 
-4. Geliştirme sunucusunu başlatın:
-\`\`\`bash
-yarn dev
-\`\`\`
+Arayüz, mobil ve tablet cihazlar için tam uyumlu (responsive) çalışmaktadır.
 
-## Kullanım
+## Project Description
 
-- Randevuları listelemek için ana sayfayı kullanın
-- Yeni randevu oluşturmak için "Randevu Oluştur" butonunu kullanın
-- Randevuları düzenlemek için ilgili randevuya tıklayın
+Appointments are displayed in a table when the page is opened. All appointment data is fetched from the API before the table is rendered, and front-end pagination is applied. The number of rows per page can be selected by the user (default: 10). Before the page loads, both Agent and Contact data are also retrieved. Agent color and initial mappings are managed via the store.
 
-## Katkıda Bulunma
+The filter section of the table allows searching and listing appointments based on assigned agents, status, date range, or contact information.
 
-1. Bu repoyu fork edin
-2. Feature branch oluşturun (\`git checkout -b feature/amazing-feature\`)
-3. Değişikliklerinizi commit edin (\`git commit -m 'Add some amazing feature'\`)
-4. Branch'inizi push edin (\`git push origin feature/amazing-feature\`)
-5. Pull Request oluşturun
+To create a new appointment, click the Create Appointment button. At this stage, a contact must be selected, an address must be entered, followed by agent selection and appointment time to complete the process.
+
+For editing, the desired appointment can be selected directly from the table, and the necessary fields can be updated. The Edit screen also displays related appointments, showing other appointments belonging to the same customer.
+
+The interface is fully responsive and optimized for both mobile and tablet devices.
+
