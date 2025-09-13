@@ -4,9 +4,11 @@
     <div class="lg:hidden mb-4">
       <button
         @click="toggleMobileFilters"
-        class="flex items-center justify-between w-full p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+        class="flex items-center justify-between w-full p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors h-20 sm:h-auto"
       >
-        <span class="font-medium text-gray-700">Filters</span>
+        <span class="font-medium text-gray-700 text-lg sm:text-base"
+          >Filters</span
+        >
         <i
           :class="[
             'pi transition-transform duration-200',
@@ -26,12 +28,11 @@
         ]"
       >
         <!-- Agent Filters -->
-        <div class="flex -space-x-2" style="height: 2.5rem">
+        <div class="flex -space-x-2 h-20 sm:h-10">
           <!-- Loading Spinner when no agents -->
           <div
             v-if="!computedAgents || computedAgents.length === 0"
-            class="flex items-center justify-center"
-            style="width: 2.5rem; height: 2.5rem"
+            class="flex items-center justify-center w-20 h-20 sm:w-10 sm:h-10"
           >
             <i class="pi pi-spin pi-spinner text-gray-600"></i>
           </div>
@@ -47,22 +48,21 @@
                 isSelected(agent) ? 'ring-2 ring-offset-1 ring-gray-700' : '',
               ]"
               :style="agentHexStyle(agent)"
-              style="width: 2.5rem; height: 2.5rem"
+              class="w-20 h-20 sm:w-10 sm:h-10"
               @click="toggleAgent(agentKey(agent))"
             >
               {{ getAgentLabel(agent) }}
             </div>
             <div v-if="extraCount > 0" class="relative" ref="overflowRef">
               <div
-                class="rounded-full flex items-center justify-center text-sm font-semibold border-2 border-white bg-gray-200 text-gray-700 shadow-sm cursor-pointer"
-                style="width: 2.5rem; height: 2.5rem"
+                class="rounded-full flex items-center justify-center text-sm font-semibold border-2 border-white bg-gray-200 text-gray-700 shadow-sm cursor-pointer w-20 h-20 sm:w-10 sm:h-10"
                 @click.stop="toggleOverflow()"
               >
                 +{{ extraCount }}
               </div>
               <div
                 v-show="overflowOpen"
-                class="absolute left-1/2 -translate-x-1/2 top-full mt-2 bg-primary border border-gray-200 rounded-md shadow-lg p-2 text-xs text-gray-700 whitespace-nowrap z-20 w-56"
+                class="agent-select-flowpanel absolute left-1/2 -translate-x-1/2 top-full mt-2 bg-primary border border-gray-200 rounded-md shadow-lg p-2 text-xs text-gray-700 whitespace-nowrap z-20 w-56"
                 @click.stop
               >
                 <div
@@ -117,7 +117,7 @@
           optionLabel="label"
           optionValue="value"
           placeholder="All Statuses"
-          class="custom-dropdown text-sm p-1"
+          class="custom-dropdown text-sm p-1 h-20 sm:h-auto"
           @change="emitFilters"
         />
 
@@ -125,8 +125,7 @@
         <div class="flex items-center gap-4">
           <Calendar
             v-model="filters.dateRange[0]"
-            style="width: 18rem"
-            class="calendar-input"
+            class="calendar-input w-full sm:w-72 h-20 sm:h-auto"
             :showTime="true"
             :placeholder="$t('appointments.placeholders.dateFrom')"
             :showIcon="true"
@@ -134,8 +133,7 @@
           />
           <Calendar
             v-model="filters.dateRange[1]"
-            style="width: 18rem"
-            class="calendar-input"
+            class="calendar-input w-full sm:w-72 h-20 sm:h-auto"
             :showTime="true"
             :placeholder="$t('appointments.placeholders.dateTo')"
             :showIcon="true"
@@ -153,7 +151,7 @@
             <InputText
               v-model="filters.search"
               :placeholder="$t('appointments.placeholders.search')"
-              class="w-full pl-3 pr-8 py-2 text-base border-2 border-primary rounded-md custom-search text-center"
+              class="w-full pl-3 pr-8 py-2 text-base border-2 border-primary rounded-md custom-search text-center h-20 sm:h-auto"
               @input="debounceSearch"
             />
           </span>
@@ -385,5 +383,12 @@ export default {
 }
 :deep(.custom-search.p-inputtext::placeholder) {
   color: black;
+}
+@media (max-width: 768px) {
+  .agent-select-flowpanel {
+    left: 0 !important;
+    width: 15rem;
+    font-size: 10px !important;
+  }
 }
 </style>
