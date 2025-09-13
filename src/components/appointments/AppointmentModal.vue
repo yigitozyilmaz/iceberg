@@ -5,6 +5,10 @@
     :modal="true"
     :style="{ width: '32rem', maxWidth: '95vw' }"
     class="appointment-modal"
+    :pt="{
+      header: { style: 'background: var(--color-primary); color: black' },
+      content: { style: 'background: var(--color-primary)' },
+    }"
   >
     <template #header>
       <div class="flex items-center justify-center gap-2 w-full h-full">
@@ -18,56 +22,95 @@
       <div class="modal-form-content">
         <!-- 1. Contact Search - En başta -->
         <div class="space-y-1">
-          <!-- Search Input (Contact seçilmediğinde göster) -->
-          <div v-if="!formData.contact_id" class="relative">
-            <AutoComplete
-              v-model="selectedContact"
-              :suggestions="contactSuggestions"
-              @complete="searchContacts"
-              @item-select="onContactSelect"
-              field="display"
-              :placeholder="$t('appointments.placeholders.searchContact')"
-              class="w-full custom-input modal-search-input pr-12 text-center"
-              :class="{ 'p-invalid': errors.contact }"
-              :loading="searchingContacts"
-              forceSelection
-            />
-            <!-- Right black search icon area -->
-            <div
-              class="absolute right-0 top-0 h-full w-10 bg-black text-white flex items-center justify-center rounded-r-md pointer-events-none"
-            >
-              <i class="pi pi-search text-sm"></i>
+          <!-- Create Mode: Multi-select contacts -->
+          <template v-if="!isEdit">
+            <div class="relative">
+              <MultiSelect
+                v-model="formData.contact_id"
+                :options="allContacts"
+                optionLabel="display"
+                optionValue="airtableId"
+                display="chip"
+                :filter="true"
+                :selectionLimit="5"
+                :maxSelectedLabels="3"
+                class="w-full custom-multiselect"
+                placeholder="Search"
+                :class="{ 'p-invalid': errors.contact }"
+              />
+              <div
+                class="absolute right-0 top-0 h-full w-10 bg-black text-white flex items-center justify-center rounded-r-md pointer-events-none"
+              >
+                <i class="pi pi-search text-sm"></i>
+              </div>
             </div>
-          </div>
+          </template>
 
-          <!-- Selected Contact Card (Contact seçildiğinde göster) -->
-          <div
-            v-else
-            class="bg-gray-50 p-3 rounded-md border border-gray-200 relative"
-          >
-            <button
-              @click="clearContact"
-              class="absolute top-2 right-2 w-6 h-6 flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-full transition-colors"
+          <!-- Edit Mode: keep single contact select/search and summary card -->
+          <template v-else>
+            <!-- Search Input (Contact seçilmediğinde göster) -->
+            <div v-if="!formData.contact_id" class="relative">
+              <AutoComplete
+                v-model="selectedContact"
+                :suggestions="contactSuggestions"
+                @complete="searchContacts"
+                @item-select="onContactSelect"
+                field="display"
+                :placeholder="$t('appointments.placeholders.searchContact')"
+                class="w-full custom-input modal-search-input pr-12 text-center"
+                :class="{ 'p-invalid': errors.contact }"
+                :loading="searchingContacts"
+                forceSelection
+              />
+              <!-- Right black search icon area -->
+              <div
+                class="absolute right-0 top-0 h-full w-10 bg-black text-white flex items-center justify-center rounded-r-md pointer-events-none"
+              >
+                <i class="pi pi-search text-sm"></i>
+              </div>
+            </div>
+
+            <!-- Selected Contact Card (Contact seçildiğinde göster) -->
+            <div
+              v-else
+              class="bg-gray-50 p-3 rounded-md relative"
+              :style="{ border: '2px solid #b9b9b9' }"
             >
-              <i class="pi pi-times text-xs"></i>
-            </button>
-            <div class="flex items-center gap-3">
-              <i class="pi pi-user text-gray-600"></i>
-              <div class="flex-1">
-                <div class="font-medium text-gray-900">
-                  {{ toDisplayString(formData.contact_name) }}
-                </div>
-                <div class="text-sm text-gray-600 flex items-center gap-1">
-                  <i class="pi pi-envelope text-xs"></i>
-                  {{ toDisplayString(formData.contact_email) }}
-                </div>
-                <div class="text-sm text-gray-600 flex items-center gap-1">
-                  <i class="pi pi-phone text-xs"></i>
-                  {{ toDisplayString(formData.contact_phone) }}
+              <button
+                @click="clearContact"
+                class="absolute top-2 right-2 w-6 h-6 flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-full transition-colors"
+              >
+                <i class="pi pi-times text-xs"></i>
+              </button>
+              <div class="flex items-center gap-3">
+                <i class="pi pi-user text-gray-600"></i>
+                <div class="flex-1">
+                  <div
+                    class="font-medium text-gray-900 flex items-center gap-2 flex-wrap"
+                  >
+                    <span>{{ visibleContactNames }}</span>
+                    <span
+                      v-if="contactExtraCount > 0"
+                      class="rounded-full bg-gray-200 text-gray-700 text-[10px] px-2 py-0.5 font-semibold cursor-default"
+                      @mouseenter="openOverflowForContacts($event)"
+                      @mouseleave="startClose"
+                    >
+                      +{{ contactExtraCount }}
+                    </span>
+                  </div>
+                  <div class="text-sm text-gray-600 flex items-center gap-1">
+                    <i class="pi pi-envelope text-xs"></i>
+                    <span>{{ visibleContactEmails }}</span>
+                  </div>
+                  <div class="text-sm text-gray-600 flex items-center gap-1">
+                    <i class="pi pi-phone text-xs"></i>
+                    <span>{{ visibleContactPhones }}</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </template>
+
           <small v-if="errors.contact" class="p-error">{{
             errors.contact
           }}</small>
@@ -112,7 +155,8 @@
             <!-- Address Card (Address var ve edit modunda değilse göster) -->
             <div
               v-else-if="formData.appointment_address"
-              class="bg-gray-50 p-3 rounded-md border border-gray-200 relative"
+              class="bg-gray-50 p-3 rounded-md relative"
+              :style="{ border: '2px solid #b9b9b9' }"
             >
               <button
                 @click="startEditingAddress"
@@ -201,7 +245,7 @@
             :placeholder="$t('appointments.fields.status')"
             class="w-full custom-dropdown"
             :style="{
-              border: '2px solid var(--color-primary)',
+              border: '2px solid #b9b9b9',
               borderRadius: '0.5rem',
             }"
           />
@@ -226,7 +270,8 @@
           <div
             v-for="ra in visibleRelatedAppointments"
             :key="ra.id"
-            class="border border-gray-200 rounded-xl px-3 py-2 flex items-center justify-between gap-3 mb-2 bg-white"
+            class="rounded-xl px-3 py-2 flex items-center justify-between gap-3 mb-2 bg-white"
+            :style="{ border: '2px solid #b9b9b9' }"
           >
             <!-- Left: address + pill stacked -->
             <div class="flex items-start gap-2">
@@ -406,6 +451,65 @@ export default {
       if (Array.isArray(cid)) return cid.length > 0;
       return !!cid;
     },
+    // Contacts display helpers for edit card
+    contactNames() {
+      const value = this.formData?.contact_name;
+      if (Array.isArray(value)) {
+        return value
+          .filter(
+            (v) => v !== null && v !== undefined && String(v).trim() !== ""
+          )
+          .map((v) => String(v));
+      }
+      const s = String(value || "").trim();
+      return s ? [s] : [];
+    },
+    contactEmails() {
+      const value = this.formData?.contact_email;
+      if (Array.isArray(value)) {
+        return value
+          .filter(
+            (v) => v !== null && v !== undefined && String(v).trim() !== ""
+          )
+          .map((v) => String(v));
+      }
+      const s = String(value || "").trim();
+      return s ? [s] : [];
+    },
+    contactPhones() {
+      const value = this.formData?.contact_phone;
+      if (Array.isArray(value)) {
+        return value
+          .filter(
+            (v) => v !== null && v !== undefined && String(v).trim() !== ""
+          )
+          .map((v) => String(v));
+      }
+      const s = String(value || "").trim();
+      return s ? [s] : [];
+    },
+    visibleContactNames() {
+      const list = this.contactNames.slice(0, 3);
+      return list.length
+        ? list.join(", ")
+        : this.toDisplayString(this.formData?.contact_name);
+    },
+    visibleContactEmails() {
+      const list = this.contactEmails.slice(0, 3);
+      return list.length
+        ? list.join(", ")
+        : this.toDisplayString(this.formData?.contact_email);
+    },
+    visibleContactPhones() {
+      const list = this.contactPhones.slice(0, 3);
+      return list.length
+        ? list.join(", ")
+        : this.toDisplayString(this.formData?.contact_phone);
+    },
+    contactExtraCount() {
+      const extra = this.contactNames.length - 3;
+      return extra > 0 ? extra : 0;
+    },
     isPastDate() {
       const d = new Date(this.formData.appointment_date);
       if (isNaN(d.getTime())) return false;
@@ -448,7 +552,7 @@ export default {
       return (
         this.formData.appointment_date &&
         this.formData.appointment_address &&
-        this.formData.contact_id
+        this.hasSelectedContact
       );
     },
     relatedAppointmentsSorted() {
@@ -575,14 +679,76 @@ export default {
       }
     },
     "formData.contact_id"(val) {
+      // Create modunda 5 seçim sınırı uygula (fallback, UI zaten engelliyor)
+      if (!this.isEdit && Array.isArray(val) && val.length > 5) {
+        this.formData.contact_id = val.slice(0, 5);
+      }
       if (this.isEdit && val) {
         this.loadRelatedAppointments();
-      } else {
+      } else if (this.isEdit) {
         this.relatedAppointments = [];
       }
     },
   },
   methods: {
+    openOverflowForContacts(evt) {
+      if (this.tooltipEl) return;
+      const rect = evt.currentTarget.getBoundingClientRect();
+      const el = document.createElement("div");
+      el.className =
+        "fixed bg-white border border-gray-200 rounded-md shadow-lg p-2 text-xs text-gray-700 whitespace-nowrap z-[9999]";
+      el.style.left = `${rect.left + rect.width / 2}px`;
+      el.style.top = `${rect.bottom + 8}px`;
+      el.style.transform = "translateX(-50%)";
+      el.style.minWidth = "200px";
+
+      const title = document.createElement("div");
+      title.className = "px-2 py-1 text-[11px] text-gray-500";
+      try {
+        title.textContent =
+          this.$t("appointments.labels.otherContacts") || "Other contacts";
+      } catch (e) {
+        title.textContent = "Other contacts";
+      }
+      el.appendChild(title);
+
+      const names = this.contactNames.slice(3);
+      const emails = this.contactEmails.slice(3);
+      const phones = this.contactPhones.slice(3);
+      const len = Math.max(names.length, emails.length, phones.length);
+      for (let i = 0; i < len; i++) {
+        const row = document.createElement("div");
+        row.className = "px-2 py-1 flex flex-col gap-0.5";
+        const name = document.createElement("div");
+        name.className = "text-gray-800 font-medium";
+        name.textContent = names[i] || "";
+        if (name.textContent) row.appendChild(name);
+        const email = document.createElement("div");
+        email.className = "text-gray-600";
+        if (emails[i]) {
+          email.textContent = emails[i];
+          row.appendChild(email);
+        }
+        const phone = document.createElement("div");
+        phone.className = "text-gray-600";
+        if (phones[i]) {
+          phone.textContent = phones[i];
+          row.appendChild(phone);
+        }
+        if (row.children.length) el.appendChild(row);
+      }
+
+      el.addEventListener("mouseenter", () => {
+        if (this._closeTimer) {
+          clearTimeout(this._closeTimer);
+          this._closeTimer = null;
+        }
+      });
+      el.addEventListener("mouseleave", () => this.startClose());
+
+      document.body.appendChild(el);
+      this.tooltipEl = el;
+    },
     normalizeAgents(appointment) {
       // Same normalization as list
       if (Array.isArray(appointment?.agents) && appointment.agents.length) {
@@ -769,7 +935,7 @@ export default {
       return {
         appointment_date: new Date(),
         appointment_address: "",
-        contact_id: null,
+        contact_id: [],
         contact_name: "",
         contact_email: "",
         contact_phone: "",
@@ -974,7 +1140,7 @@ export default {
         this.errors.appointment_address = this.$t("validation.required");
       }
 
-      if (!this.formData.contact_id) {
+      if (!this.hasSelectedContact) {
         this.errors.contact = this.$t("validation.contactRequired");
       }
 
@@ -1043,7 +1209,8 @@ export default {
 
 <style scoped>
 /* Modal genel stilleri */
-:deep(.appointment-modal .p-dialog-header) {
+::deep(.appointment-modal .p-dialog-header) {
+  background: var(--color-primary) !important;
   color: white;
   display: flex;
   justify-content: center;
@@ -1092,11 +1259,12 @@ export default {
 
 /* Form input stilleri */
 .custom-input {
-  border: 2px solid var(--color-primary);
+  border: 2px solid #b9b9b9;
   border-radius: 0.5rem;
   padding: 0.5rem 0.75rem;
   font-size: 0.95rem;
   transition: all 0.3s ease;
+  height: 44px;
 }
 
 .custom-input:focus {
@@ -1110,13 +1278,16 @@ export default {
 }
 
 /* Calendar stilleri - Updated for better icon visibility */
+:deep(.custom-calendar.p-calendar),
 :deep(.custom-calendar .p-calendar) {
-  border: 2px solid var(--color-primary);
+  border: 2px solid #b9b9b9;
   border-radius: 0.5rem;
   transition: all 0.3s ease;
   display: flex;
   align-items: stretch;
   overflow: hidden;
+  background: #ffffff;
+  min-height: 44px;
 }
 
 :deep(.custom-calendar .p-calendar:focus-within) {
@@ -1130,7 +1301,8 @@ export default {
   padding-right: 4rem; /* Space for manual icon */
   font-size: 0.95rem;
   flex: 1;
-  background: transparent;
+  background: #ffffff;
+  height: 44px;
 }
 
 :deep(.custom-calendar .p-inputtext:focus) {
@@ -1167,9 +1339,10 @@ export default {
 
 /* Dropdown stilleri */
 :deep(.custom-dropdown .p-dropdown) {
-  border: 2px solid var(--color-primary);
+  border: 2px solid #b9b9b9;
   border-radius: 0.5rem;
   transition: all 0.3s ease;
+  min-height: 44px;
 }
 
 :deep(.custom-dropdown .p-dropdown:focus-within) {
@@ -1255,9 +1428,10 @@ label {
 
 /* AutoComplete Focus Styling */
 :deep(.p-autocomplete) {
-  border: 1px solid var(--color-primary);
+  border: 1px solid #b9b9b9;
   border-radius: 0.375rem;
   transition: all 0.2s ease;
+  min-height: 44px;
 }
 
 :deep(.p-autocomplete:focus-within) {
@@ -1268,6 +1442,7 @@ label {
   border: none;
   outline: none;
   box-shadow: none;
+  height: 44px;
 }
 
 :deep(.p-autocomplete .p-inputtext:focus) {
@@ -1278,9 +1453,10 @@ label {
 
 /* MultiSelect Focus Styling */
 :deep(.p-multiselect) {
-  border: 2px solid var(--color-primary);
+  border: 2px solid #b9b9b9;
   border-radius: 0.5rem;
   transition: all 0.3s ease;
+  min-height: 44px;
 }
 
 :deep(.p-multiselect:focus-within) {
@@ -1318,6 +1494,13 @@ label {
 
 :deep(.p-multiselect .p-multiselect-token:hover .p-multiselect-token-icon) {
   color: #fecaca;
+}
+
+/* MultiSelect Label Styling */
+::deep(.p-multiselect .p-multiselect-label) {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
 }
 
 /* Cancel Button - Black Style */

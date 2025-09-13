@@ -8,20 +8,25 @@
       <div class="flex items-center gap-2">
         <i class="pi pi-user text-gray-400 text-sm" />
         <span class="font-medium text-gray-900 truncate">{{
-          formatArrayLike(appointment?.contact_name)
+          visibleContactNames
         }}</span>
+        <span
+          v-if="contactExtraCount > 0"
+          class="rounded-full bg-gray-200 text-gray-700 text-[10px] px-2 py-0.5 font-semibold cursor-default whitespace-nowrap"
+          @mouseenter="openContactsOverflow"
+          @mouseleave="startCloseContacts"
+          ref="contactsOverflowAnchor"
+        >
+          +{{ contactExtraCount }}
+        </span>
       </div>
       <div class="flex items-center gap-2 text-xs text-gray-500">
         <i class="pi pi-envelope text-gray-400 text-xs" />
-        <span class="truncate">{{
-          formatArrayLike(appointment?.contact_email)
-        }}</span>
+        <span class="truncate">{{ visibleContactEmails }}</span>
       </div>
       <div class="flex items-center gap-2 text-xs text-gray-500">
         <i class="pi pi-phone text-gray-400 text-xs" />
-        <span class="truncate">{{
-          formatArrayLike(appointment?.contact_phone)
-        }}</span>
+        <span class="truncate">{{ visibleContactPhones }}</span>
       </div>
     </div>
 
@@ -128,6 +133,65 @@ export default {
     agentsStore() {
       return useAgentsStore();
     },
+    // Contacts display helpers
+    contactNames() {
+      const value = this.appointment?.contact_name;
+      if (Array.isArray(value)) {
+        return value
+          .filter(
+            (v) => v !== null && v !== undefined && String(v).trim() !== ""
+          )
+          .map((v) => String(v));
+      }
+      const s = String(value || "").trim();
+      return s ? [s] : [];
+    },
+    contactEmails() {
+      const value = this.appointment?.contact_email;
+      if (Array.isArray(value)) {
+        return value
+          .filter(
+            (v) => v !== null && v !== undefined && String(v).trim() !== ""
+          )
+          .map((v) => String(v));
+      }
+      const s = String(value || "").trim();
+      return s ? [s] : [];
+    },
+    contactPhones() {
+      const value = this.appointment?.contact_phone;
+      if (Array.isArray(value)) {
+        return value
+          .filter(
+            (v) => v !== null && v !== undefined && String(v).trim() !== ""
+          )
+          .map((v) => String(v));
+      }
+      const s = String(value || "").trim();
+      return s ? [s] : [];
+    },
+    visibleContactNames() {
+      const list = this.contactNames.slice(0, 3);
+      return list.length
+        ? list.join(", ")
+        : this.formatArrayLike(this.appointment?.contact_name);
+    },
+    visibleContactEmails() {
+      const list = this.contactEmails.slice(0, 3);
+      return list.length
+        ? list.join(", ")
+        : this.formatArrayLike(this.appointment?.contact_email);
+    },
+    visibleContactPhones() {
+      const list = this.contactPhones.slice(0, 3);
+      return list.length
+        ? list.join(", ")
+        : this.formatArrayLike(this.appointment?.contact_phone);
+    },
+    contactExtraCount() {
+      const extra = this.contactNames.length - 3;
+      return extra > 0 ? extra : 0;
+    },
     isUpcoming() {
       if (this.appointment?.is_cancelled) return false;
       const date = new Date(this.appointment?.appointment_date);
@@ -233,6 +297,79 @@ export default {
   methods: {
     handleRowClick() {
       this.$emit("edit", this.appointment);
+    },
+    openContactsOverflow() {
+      if (this.tooltipEl) return;
+      const anchor = this.$refs.contactsOverflowAnchor;
+      if (!anchor) return;
+      const rect = anchor.getBoundingClientRect();
+      const el = document.createElement("div");
+      el.className =
+        "fixed bg-white border border-gray-200 rounded-md shadow-lg p-2 text-xs text-gray-700 whitespace-nowrap z-[9999]";
+      el.style.left = `${rect.left + rect.width / 2}px`;
+      el.style.top = `${rect.bottom + 8}px`;
+      el.style.transform = "translateX(-50%)";
+      el.style.minWidth = "200px";
+
+      const title = document.createElement("div");
+      title.className = "px-2 py-1 text-[11px] text-gray-500";
+      try {
+        title.textContent =
+          this.$t("appointments.labels.otherContacts") || "Other contacts";
+      } catch (e) {
+        title.textContent = "Other contacts";
+      }
+      el.appendChild(title);
+
+      const names = this.contactNames.slice(3);
+      const emails = this.contactEmails.slice(3);
+      const phones = this.contactPhones.slice(3);
+      const len = Math.max(names.length, emails.length, phones.length);
+      for (let i = 0; i < len; i++) {
+        const row = document.createElement("div");
+        row.className = "px-2 py-1 flex flex-col gap-0.5";
+
+        const name = document.createElement("div");
+        name.className = "text-gray-800 font-medium";
+        name.textContent = names[i] || "";
+        if (name.textContent) row.appendChild(name);
+
+        const email = document.createElement("div");
+        email.className = "text-gray-600";
+        if (emails[i]) {
+          email.textContent = emails[i];
+          row.appendChild(email);
+        }
+
+        const phone = document.createElement("div");
+        phone.className = "text-gray-600";
+        if (phones[i]) {
+          phone.textContent = phones[i];
+          row.appendChild(phone);
+        }
+
+        if (row.children.length) el.appendChild(row);
+      }
+
+      el.addEventListener("mouseenter", () => {
+        if (this._closeTimer) {
+          clearTimeout(this._closeTimer);
+          this._closeTimer = null;
+        }
+      });
+      el.addEventListener("mouseleave", () => this.startCloseContacts());
+
+      document.body.appendChild(el);
+      this.tooltipEl = el;
+    },
+    startCloseContacts() {
+      if (this._closeTimer) clearTimeout(this._closeTimer);
+      this._closeTimer = setTimeout(() => {
+        if (this.tooltipEl) {
+          document.body.removeChild(this.tooltipEl);
+          this.tooltipEl = null;
+        }
+      }, 80);
     },
     formatArrayLike(value) {
       if (value === null || value === undefined) return "unknown";

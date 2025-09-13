@@ -75,11 +75,22 @@ export class AppointmentService extends BaseService {
             cleanData.appointment_date = new Date(appointmentData.appointment_date).toISOString();
         }
 
-        // Contact - contact_id Airtable record ID array format olarak gönder
+        // Contact - contact_id Airtable linked records array
+        // Create aşamasında artık birden fazla contact destekliyoruz
         if (appointmentData.contact_id) {
-            const contactId = appointmentData.contact_id.toString();
-            if (contactId.startsWith('rec') && contactId.length >= 17) {
-                cleanData.contact_id = [contactId]; // Array format
+            if (Array.isArray(appointmentData.contact_id)) {
+                const valid = appointmentData.contact_id
+                    .filter(Boolean)
+                    .map(id => id.toString())
+                    .filter(id => id.startsWith('rec') && id.length >= 17);
+                if (valid.length > 0) {
+                    cleanData.contact_id = valid; // Already array
+                }
+            } else {
+                const single = appointmentData.contact_id.toString();
+                if (single.startsWith('rec') && single.length >= 17) {
+                    cleanData.contact_id = [single];
+                }
             }
         }
 
@@ -115,11 +126,21 @@ export class AppointmentService extends BaseService {
             cleanData.appointment_date = new Date(appointmentData.appointment_date).toISOString();
         }
 
-        // Contact - contact_id Airtable record ID array format olarak gönder
+        // Contact - edit'te tekli kalacak; ancak API çoklu kabul edebilir
         if (appointmentData.contact_id) {
-            const contactId = appointmentData.contact_id.toString();
-            if (contactId.startsWith('rec') && contactId.length >= 17) {
-                cleanData.contact_id = [contactId]; // Array format
+            if (Array.isArray(appointmentData.contact_id)) {
+                const valid = appointmentData.contact_id
+                    .filter(Boolean)
+                    .map(id => id.toString())
+                    .filter(id => id.startsWith('rec') && id.length >= 17);
+                if (valid.length > 0) {
+                    cleanData.contact_id = valid;
+                }
+            } else {
+                const single = appointmentData.contact_id.toString();
+                if (single.startsWith('rec') && single.length >= 17) {
+                    cleanData.contact_id = [single];
+                }
             }
         }
 
