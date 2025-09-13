@@ -30,7 +30,7 @@ Düzenleme için, tablodan ilgili randevu seçilir ve istenilen alanlarda deği�
 
 Arayüz, mobil ve tablet cihazlar için tam uyumlu (responsive) çalışmaktadır.
 
-Project Description
+## Project Description
 
 Appointments are displayed in a table when the page is opened. All appointment data is fetched from the API before the table is rendered, and front-end pagination is applied. The number of rows per page can be selected by the user (default: 10). Before the page loads, both Agent and Contact data are also retrieved. Agent color and initial mappings are managed via the store.
 
