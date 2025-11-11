@@ -1,0 +1,42 @@
+[
+  {
+    "id": "recAgent001",
+    "createdTime": "2024-01-15T10:00:00.000Z",
+    "code": "JD",
+    "agent_name": "John",
+    "agent_surname": "Doe",
+    "color": "#CCD070"
+  },
+  {
+    "id": "recAgent002",
+    "createdTime": "2024-01-15T10:05:00.000Z",
+    "code": "JS",
+    "agent_name": "Jane",
+    "agent_surname": "Smith",
+    "color": "#7EC8E3"
+  },
+  {
+    "id": "recAgent003",
+    "createdTime": "2024-01-15T10:10:00.000Z",
+    "code": "MB",
+    "agent_name": "Michael",
+    "agent_surname": "Brown",
+    "color": "#F4A460"
+  },
+  {
+    "id": "recAgent004",
+    "createdTime": "2024-01-15T10:15:00.000Z",
+    "code": "ED",
+    "agent_name": "Emily",
+    "agent_surname": "Davis",
+    "color": "#DDA0DD"
+  },
+  {
+    "id": "recAgent005",
+    "createdTime": "2024-01-15T10:20:00.000Z",
+    "code": "RW",
+    "agent_name": "Robert",
+    "agent_surname": "Wilson",
+    "color": "#90EE90"
+  }
+]
