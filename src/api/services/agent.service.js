@@ -1,21 +1,21 @@
-import { BaseService } from './base.service';
+import agentsData from '../../data/agents.json';
 
-export class AgentService extends BaseService {
-    static get entity() {
-        return 'agents';
-    }
-
+export class AgentService {
     static async getAgents(options = {}) {
-        const params = {
-            view: 'Grid view',
-            ...options,
-        };
-
         try {
-            const response = await this.request.get(`/${this.entity}`, { params });
-            return this.responseWrapper(response);
+            // Simulate API response with static data
+            return {
+                success: true,
+                data: agentsData,
+                status: 200
+            };
         } catch (error) {
-            throw this.errorWrapper(error);
+            throw {
+                success: false,
+                data: null,
+                status: 500,
+                message: 'Failed to load agents'
+            };
         }
     }
 }
